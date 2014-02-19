@@ -105,15 +105,10 @@ void Splash::action(int line, int column)
 
 void Splash::explode(int line, int column)
 {
-	std::cout << std::endl << "left" << std::endl;
 	left(line, column);
-	std::cout << std::endl << "right" << std::endl;
 	right(line, column);
-	std::cout << std::endl << "top" << std::endl;
 	top(line, column);
-	std::cout << std::endl << "bottom" << std::endl;
 	bottom(line, column);
-	std::cout << std::endl << "end" << std::endl;
 
 	board[line][column] = 0;
 	shots++;
