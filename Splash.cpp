@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include "Splash.hpp"
 
 Splash::Splash()
@@ -37,9 +39,15 @@ Splash::~Splash()
 
 void Splash::generate()
 {
+	srand(time(NULL));
+
 	for(int i = 0; i < lines; i++)
+	{
 		for(int y = 0; y < lines; y++)
-			board[i][y] = 0;
+		{
+			board[i][y] = rand() % 4;
+		}
+	}
 }
 
 void Splash::display()
