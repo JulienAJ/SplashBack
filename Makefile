@@ -11,4 +11,4 @@ clean:
 	@rm -fr *.o
 
 mrproper: clean
-	@rm Splash
+	@rm -f Splash
