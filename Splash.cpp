@@ -68,8 +68,7 @@ void Splash::play()
 {
 	int l, c;
 
-	//while(!empty && shots > 0) A remplacer apres avoir refait fonction generer
-	while(shots > 0)
+	while(!empty() && shots > 0) 
 	{
 		display();
 		l = -1;
@@ -113,13 +112,15 @@ void Splash::action(int line, int column)
 
 void Splash::explode(int line, int column)
 {
+
+	board[line][column] = 0;
+	shots++;
+
 	left(line, column);
 	right(line, column);
 	top(line, column);
 	bottom(line, column);
 
-	board[line][column] = 0;
-	shots++;
 }
 
 void Splash::left(int line, int column)
