@@ -43,7 +43,7 @@ void Splash::generate()
 
 	for(int i = 0; i < lines; i++)
 	{
-		for(int y = 0; y < lines; y++)
+		for(int y = 0; y < columns; y++)
 		{
 			board[i][y] = rand() % 4;
 		}
@@ -91,7 +91,7 @@ void Splash::play()
 bool Splash::empty()
 {
 	for(int i = 0; i < lines; i++)
-		for(int y = 0; y < lines; y++)
+		for(int y = 0; y < columns; y++)
 			if(board[i][y] != 0)
 				return false;
 
