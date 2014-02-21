@@ -99,126 +99,48 @@ bool Splash::empty()
 
 void Splash::action(int line, int column)
 {
-	if(board[line][column] == 3)
+	if(board[line][column] != 0)
 	{
-		explode(line, column);
+		handle_action(line, column);
+		shots--;
 	}
+}
 
+void Splash::handle_action(int line, int column)
+{
+	if(board[line][column] == 3)
+		explode(line, column);
 	else
 		board[line][column]++;
-
-	shots--;
 }
 
 void Splash::explode(int line, int column)
 {
+	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+	bool combo = false;
 
 	board[line][column] = 0;
-	shots++;
-
-	left(line, column);
-	right(line, column);
-	top(line, column);
-	bottom(line, column);
-
-}
-
-void Splash::left(int line, int column)
-{
-	if(column == 0)
-		return;
-
-	bool done = false;
-	int i = column-1;
-
-	while(!done && i >= 0)
+	for(int i = 0; i < 4; i++)
 	{
-		if(board[line][i] == 3)
-		{
-			explode(line, i);
-			done = true;
-		}
+		int l = line;
+		int c = column;
+		bool in_board;
 
-		else if (board[line][i] != 0)
+		do
 		{
-			board[line][i]++;
-			done = true;
+			l += deltas[i][0];
+			c += deltas[i][1];
+		} while((in_board = (l >= 0 && l < 4 && c >= 0 && c < 4)) &&
+				board[l][c] == 0);
+
+		if(in_board)
+		{
+			if(board[c][l] == 3)
+				combo = true;
+			handle_action(l, c);
 		}
-		i--;
 	}
-}
 
-void Splash::right(int line, int column)
-{
-	if(column == columns-1)
-		return;
-
-	bool done = false;
-	int i = column+1;
-
-	while(!done && i < columns)
-	{
-		if(board[line][i] == 3)
-		{
-			explode(line, i);
-			done = true;
-		}
-
-		else if (board[line][i] != 0)
-		{
-			board[line][i]++;
-			done = true;
-		}
-		i++;
-	}
-}
-
-void Splash::top(int line, int column)
-{
-	if(line == 0)
-		return;
-
-	bool done = false;
-	int i = line-1;
-
-	while(!done && i >= 0)
-	{
-		if(board[i][column] == 3)
-		{
-			explode(i, column);
-			done = true;
-		}
-
-		else if (board[i][column] != 0)
-		{
-			board[i][column]++;
-			done = true;
-		}
-		i--;
-	}
-}
-
-void Splash::bottom(int line, int column)
-{
-	if(line == lines-1)
-		return;
-
-	bool done = false;
-	int i = line+1;
-
-	while(!done && i < lines)
-	{
-		if(board[i][column] == 3)
-		{
-			explode(i, column);
-			done = true;
-		}
-
-		else if (board[i][column] != 0)
-		{
-			board[i][column]++;
-			done = true;
-		}
-		i++;
-	}
+	if(combo)
+		shots++;
 }

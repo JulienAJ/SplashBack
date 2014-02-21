@@ -17,8 +17,5 @@ class Splash {
 		bool empty();
 		void action(int, int); // L, C
 		void explode(int, int); // L, C
-		void left(int, int); // L, C
-		void right(int, int); // L, C
-		void top(int, int); // L, C
-		void bottom(int, int); // L, C
+		void handle_action(int, int); //L, C
 };
