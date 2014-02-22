@@ -135,7 +135,7 @@ void Splash::explode(int line, int column)
 
 		if(in_board)
 		{
-			if(board[c][l] == 3)
+			if(board[l][c] == 3)
 				combo = true;
 			handle_action(l, c);
 		}
