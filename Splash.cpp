@@ -68,7 +68,7 @@ void Splash::play()
 {
 	int l, c;
 
-	while(!empty() && shots > 0) 
+	while(!empty() && shots > 0)
 	{
 		display();
 		l = -1;
@@ -99,11 +99,8 @@ bool Splash::empty()
 
 void Splash::action(int line, int column)
 {
-	if(board[line][column] != 0)
-	{
-		handle_action(line, column);
-		shots--;
-	}
+	handle_action(line, column);
+	shots--;
 }
 
 void Splash::handle_action(int line, int column)
