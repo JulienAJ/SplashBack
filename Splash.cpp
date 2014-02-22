@@ -8,6 +8,7 @@ Splash::Splash()
 	columns = 4;
 	lines = 4;
 	shots = 10;
+	level = 1;
 
 	board = new int*[4];
 	for(int i = 0; i < 4; i++)
@@ -21,6 +22,7 @@ Splash::Splash(int lines, int columns, int shots)
 	this->lines = lines;
 	this->columns = columns;
 	this->shots = shots;
+	level = 1;
 
 	board = new int*[lines];
 	for(int i = 0; i < lines; i++)
@@ -52,7 +54,7 @@ void Splash::generate()
 
 void Splash::display()
 {
-	std::cout << "Splash Back\n";
+	std::cout << "Splash Back : Niveau " << level << '\n';
 	
 	for(int i = 0; i < lines; i++)
 	{
@@ -67,24 +69,36 @@ void Splash::display()
 void Splash::play()
 {
 	int l, c;
+	bool quit = false;
 
-	while(!empty() && shots > 0)
+	while(!quit)
 	{
-		display();
-		l = -1;
-		c = -1;
-		std::cout << "Entrez la ligne de la case a activer : ";
-		std::cin >> l;
-		std::cout << "Entrez la colone de la case a activer : ";
-		std::cin >> c;
-		action(l, c);
+		while(!empty() && shots > 0)
+		{
+			display();
+			l = -1;
+			c = -1;
+			std::cout << "Entrez la ligne de la case a activer : ";
+			std::cin >> l;
+			std::cout << "Entrez la colone de la case a activer : ";
+			std::cin >> c;
+			action(l, c);
+		}
+
+		if(empty())
+		{
+			std::cout << "Niveau termine !\n";
+			shots++;
+			level++;
+			generate();
+		}
+
+		else
+		{
+			std::cout << "Desole, vous avez perdu :'(\n";
+			quit = true;
+		}
 	}
-
-	if(empty())
-		std::cout << "Felicitations, vous avez gagne ! =D \n";
-
-	else	
-		std::cout << "Desole, vous avez perdu :'(\n";
 }
 
 bool Splash::empty()

@@ -5,6 +5,7 @@ class Splash {
 		int columns;
 		int lines;
 		int shots;
+		int level;
 
 	public:
 		Splash();
