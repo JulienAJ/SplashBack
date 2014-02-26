@@ -1,14 +1,30 @@
-Splash: main.o Splash.o
-	g++ $^ -o $@ 
+CXX=c++
+CXXFLAGS=-O2 -Wall -fvisibility=hidden
+LDFLAGS=-lIrrlicht
+TARGET=Splash
+HOST=$(shell uname)
+
+ifeq ($(HOST),Darwin)
+LDFLAGS+=-framework OpenGL -framework Cocoa -framework IOKit
+else
+LDFLAGS+=-lGL -lX11 -lXxf86vm -lXext
+endif
+
+all: main.o Game.o Splash.o
+	$(CXX) $^ -o $(TARGET) $(LDFLAGS)
 
 main.o: main.cpp
-	g++ -c $^
+	$(CXX) -c $^ $(CXXFLAGS)
 
-Splash.o: Splash.cpp Splash.hpp
-	g++ -c $<
+%.o: %.cpp %.hpp
+	$(CXX) -c $< $(CXXFLAGS)
+
+.PHONY: clean mrproper rebuild
 
 clean:
-	@rm -fr *.o
+	@rm -f *.o
 
 mrproper: clean
-	@rm -f Splash
+	@rm -rf $(TARGET)
+
+rebuild: clean all

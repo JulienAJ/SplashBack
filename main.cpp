@@ -1,9 +1,10 @@
-#include <iostream>
-#include "Splash.hpp"
+#include "Game.hpp"
 
 int main()
 {
-	Splash S;
-	S.play();
-	return 0;
+	Game g;
+
+	g.run();
+
+	return g.getExitCode();
 }
