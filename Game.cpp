@@ -3,6 +3,39 @@
 
 using namespace irr;
 
+class EventReceiver : public irr::IEventReceiver
+{
+	private:
+		irr::IrrlichtDevice* mDevice;
+	public:
+		EventReceiver(irr::IrrlichtDevice* device)
+		{
+			mDevice = device;
+		}
+
+		virtual bool OnEvent(const irr::SEvent& event)
+		{
+			if(event.EventType == irr::EET_KEY_INPUT_EVENT)
+			{
+				//Clavier
+				if(event.KeyInput.Key == irr::KEY_ESCAPE)
+					mDevice->closeDevice();
+			}
+			else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
+			{
+				//souris
+				wchar_t abs[5], ord[5];
+				swprintf(abs, sizeof(abs) / sizeof(*abs), L"%d", (event.MouseInput.X - 135));
+				swprintf(ord, sizeof(ord) / sizeof(*ord), L"%d", (event.MouseInput.Y - 55));
+
+				if(event.MouseInput.Event == irr::EMIE_LMOUSE_DOUBLE_CLICK)
+					mDevice->getGUIEnvironment()->addMessageBox(abs, ord);
+			}
+			return false;
+		}
+
+};
+
 Game::Game()
 {
 	device = createDevice(video::EDT_OPENGL,
@@ -28,6 +61,10 @@ void Game::run()
 
 	setupCamera();
 	loadScene();
+
+	// Evenements
+	EventReceiver eventReceiver(device);
+	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
 	wchar_t title[16];
