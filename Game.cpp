@@ -78,7 +78,7 @@ void Game::run()
 		int fps = driver->getFPS();
 		if(last_fps != fps)
 		{
-			swprintf(title, sizeof(title), L"FPS: %d", fps);
+			swprintf(title, sizeof(title)/sizeof(*title), L"FPS: %d", fps);
 			device->setWindowCaption(title);
 			last_fps = fps;
 		}
