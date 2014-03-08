@@ -1,3 +1,6 @@
+#ifndef SPLASH_HPP
+#define SPLASH_HPP
+
 class Splash
 {
 	private:
@@ -21,3 +24,5 @@ class Splash
 		void display();
 		bool empty();
 };
+
+#endif
