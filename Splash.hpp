@@ -1,6 +1,9 @@
 #ifndef SPLASH_HPP
 #define SPLASH_HPP
 
+#include <list>
+#include <stdint.h>
+
 class Splash
 {
 	private:
@@ -15,6 +18,10 @@ class Splash
 		void explode(int, int); // L, C
 		void handle_action(int, int); //L, C
 
+		uint32_t binDump();
+		void restoreBoard(uint32_t);
+		bool solveBT(std::list<std::pair<int, int> >&, int);
+
 	public:
 		Splash();
 		Splash(int, int, int); // L, C, S
@@ -23,6 +30,8 @@ class Splash
 		void play();
 		void display();
 		bool empty();
+
+		bool solve(std::list<std::pair<int, int> >&, int = -1);
 };
 
 #endif

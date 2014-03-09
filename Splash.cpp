@@ -1,6 +1,8 @@
 #include <iostream>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
+#include <list>
+#include <stdint.h>
 #include "Splash.hpp"
 
 Splash::Splash()
@@ -154,4 +156,84 @@ void Splash::explode(int line, int column)
 
 	if(combo)
 		shots++;
+}
+
+bool Splash::solve(std::list<std::pair<int, int> > &solution, int max_shots)
+{
+	uint32_t dump = binDump();
+	if(max_shots == -1)
+		max_shots = 0xffffff;
+
+	bool ret = solveBT(solution, max_shots);
+	restoreBoard(dump);
+	shots = 10;
+
+	return ret;
+}
+
+bool Splash::solveBT(std::list<std::pair<int, int> > &solution, int max_shots)
+{
+	if(empty())
+		return true;
+
+	if(shots == 0 || max_shots == 0)
+		return false;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			uint32_t dump = binDump();
+			int old_shots = shots;
+
+			action(i, j);
+			solution.push_back(std::pair<int, int>(i, j));
+
+			if(solve(solution, max_shots-1))
+				return true;
+
+			restoreBoard(dump);
+			solution.pop_back();
+			shots = old_shots;
+		}
+	}
+
+	return false;
+}
+
+uint32_t Splash::binDump()
+{
+	uint32_t boardDump = 0;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			/*
+			 * i*4+j: n°case
+			 * 2: bits necessaires pour stocker la valeur d'une case (val max = 3)
+			 */
+			int shift = (i*4+j)*2;
+			boardDump |= board[i][j]<<shift;
+		}
+	}
+
+	return boardDump;
+}
+
+void Splash::restoreBoard(uint32_t dump)
+{
+	uint32_t mask = 3; // remplis 2 bits
+	uint32_t tmp;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			int shift = (i*4+j)*2;
+
+			tmp = dump&(mask<<shift);
+			board[i][j] = tmp>>shift;
+		}
+	}
 }
