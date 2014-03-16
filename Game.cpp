@@ -93,11 +93,7 @@ void Game::render()
 
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
 
-	core::line3d<f32> ray;
-	ray.start = camera->getPosition();
-	ray.end = ray.start + (camera->getTarget() - ray.start).normalize() * 1000.0f;
-
-	selected = colmgr->getSceneNodeFromRayBB(ray);
+	selected = colmgr->getSceneNodeFromCameraBB(camera);
 	if(selected && last_selected != selected)
 	{
 		if(last_selected)
