@@ -162,7 +162,7 @@ void Game::loadScene()
 
 void Game::setupCamera()
 {
-	SKeyMap keymap[4];
+	SKeyMap keymap[8];
 
 	keymap[0].Action = EKA_MOVE_FORWARD;
 	keymap[0].KeyCode = KEY_KEY_Z;
@@ -176,8 +176,19 @@ void Game::setupCamera()
 	keymap[3].Action = EKA_STRAFE_RIGHT;
 	keymap[3].KeyCode = KEY_KEY_D;
 
+	keymap[4].Action = EKA_MOVE_FORWARD;
+	keymap[4].KeyCode = KEY_UP;
 
-	camera = smgr->addCameraSceneNodeFPS(0, 60.0f, 0.1f, -1, keymap, 4, true);
+	keymap[5].Action = EKA_MOVE_BACKWARD;
+	keymap[5].KeyCode = KEY_DOWN;
+
+	keymap[6].Action = EKA_STRAFE_LEFT;
+	keymap[6].KeyCode = KEY_LEFT;
+
+	keymap[7].Action = EKA_STRAFE_RIGHT;
+	keymap[7].KeyCode = KEY_RIGHT;
+
+	camera = smgr->addCameraSceneNodeFPS(0, 60.0f, 0.1f, -1, keymap, 8, true);
 	camera->setPosition(core::vector3df(0, 0, -50));
 }
 
