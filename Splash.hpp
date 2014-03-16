@@ -31,7 +31,7 @@ class Splash
 		void display();
 		bool empty();
 
-		bool solve(std::list<std::pair<int, int> >&, int = -1);
+		bool solve(std::list<std::pair<int, int> >&);
 };
 
 #endif

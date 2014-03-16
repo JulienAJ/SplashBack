@@ -158,15 +158,15 @@ void Splash::explode(int line, int column)
 		shots++;
 }
 
-bool Splash::solve(std::list<std::pair<int, int> > &solution, int max_shots)
+bool Splash::solve(std::list<std::pair<int, int> > &solution)
 {
 	uint32_t dump = binDump();
-	if(max_shots == -1)
-		max_shots = 0xffffff;
+	int shots_save = shots;
 
-	bool ret = solveBT(solution, max_shots);
+	solution.clear();
+	bool ret = solveBT(solution, shots);
 	restoreBoard(dump);
-	shots = 10;
+	shots = shots_save;
 
 	return ret;
 }
@@ -179,17 +179,17 @@ bool Splash::solveBT(std::list<std::pair<int, int> > &solution, int max_shots)
 	if(shots == 0 || max_shots == 0)
 		return false;
 
+	uint32_t dump = binDump();
+	int old_shots = shots;
+
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
 		{
-			uint32_t dump = binDump();
-			int old_shots = shots;
-
 			action(i, j);
 			solution.push_back(std::pair<int, int>(i, j));
 
-			if(solve(solution, max_shots-1))
+			if(solveBT(solution, max_shots-1))
 				return true;
 
 			restoreBoard(dump);
