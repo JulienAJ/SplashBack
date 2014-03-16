@@ -8,8 +8,6 @@ class Splash
 {
 	private:
 		int** board;
-		int columns;
-		int lines;
 		int shots;
 		int level;
 
@@ -24,7 +22,7 @@ class Splash
 
 	public:
 		Splash();
-		Splash(int, int, int); // L, C, S
+		Splash(int); // S
 		~Splash();
 
 		void play();

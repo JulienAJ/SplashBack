@@ -7,8 +7,6 @@
 
 Splash::Splash()
 {
-	columns = 4;
-	lines = 4;
 	shots = 10;
 	level = 1;
 
@@ -19,23 +17,21 @@ Splash::Splash()
 	generate();
 }
 
-Splash::Splash(int lines, int columns, int shots)
+Splash::Splash(int shots)
 {
-	this->lines = lines;
-	this->columns = columns;
 	this->shots = shots;
 	level = 1;
 
-	board = new int*[lines];
-	for(int i = 0; i < lines; i++)
-		board[i] = new int[columns];
+	board = new int*[4];
+	for(int i = 0; i < 4; i++)
+		board[i] = new int[4];
 
 	generate();
 }
 
 Splash::~Splash()
 {
-	for(int i = 0; i < lines; i++)
+	for(int i = 0; i < 4; i++)
 		delete [] board[i];
 
 	delete [] board;
@@ -45,9 +41,9 @@ void Splash::generate()
 {
 	srand(time(NULL));
 
-	for(int i = 0; i < lines; i++)
+	for(int i = 0; i < 4; i++)
 	{
-		for(int y = 0; y < columns; y++)
+		for(int y = 0; y < 4; y++)
 		{
 			board[i][y] = rand() % 4;
 		}
@@ -58,9 +54,9 @@ void Splash::display()
 {
 	std::cout << "Splash Back : Niveau " << level << '\n';
 	
-	for(int i = 0; i < lines; i++)
+	for(int i = 0; i < 4; i++)
 	{
-		for(int y = 0; y < columns; y++)
+		for(int y = 0; y < 4; y++)
 			std::cout << board[i][y] << " | ";
 		std::cout << '\n';
 	}
@@ -105,8 +101,8 @@ void Splash::play()
 
 bool Splash::empty()
 {
-	for(int i = 0; i < lines; i++)
-		for(int y = 0; y < columns; y++)
+	for(int i = 0; i < 4; i++)
+		for(int y = 0; y < 4; y++)
 			if(board[i][y] != 0)
 				return false;
 
