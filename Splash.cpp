@@ -89,7 +89,7 @@ void Splash::play()
 
 		if(empty())
 		{
-			std::cout << "Niveau termine !\n";
+			std::cout << "\nNiveau termine !\n\n";
 			shots++;
 			level++;
 			generate();
