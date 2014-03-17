@@ -315,3 +315,8 @@ void Splash::restoreBoard(uint32_t dump)
 		}
 	}
 }
+
+int Splash::getCell(int i, int j)
+{
+	return board[i][j];
+}

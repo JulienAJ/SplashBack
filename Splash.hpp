@@ -38,6 +38,7 @@ class Splash
 		void play();
 		void display();
 		bool empty();
+		int getCell(int, int);
 
 		bool solve(std::list<std::pair<int, int> >&);
 
