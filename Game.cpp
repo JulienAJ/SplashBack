@@ -88,7 +88,6 @@ void Game::loadScene()
 	weaponNode->setMaterialTexture(0, driver->getTexture("media/gun.jpg"));
 	weaponNode->setLoopMode(false);
 
-	f32 radius = tile_size.Z/7;
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
@@ -116,8 +115,9 @@ void Game::loadScene()
 
 			if(splash->getCell(i, j) != 0)
 			{
-				f32 x = (tile_size.Z*i)-(radius/2);
-				f32 y = (tile_size.Z*j)-(radius/2);
+				f32 x = (tile_size.Z*i);
+				f32 y = (tile_size.Z*j);
+
 				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(ball_mesh, 0, 1, core::vector3df(x, y, 0));
 				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
