@@ -79,7 +79,14 @@ void Game::loadScene()
 {
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
 	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
+	scene::IAnimatedMeshMD2* weaponMesh = (scene::IAnimatedMeshMD2*) smgr->getMesh("media/gun.md2");
 	core::vector3d<f32> tile_size = tile_mesh->getBoundingBox().getExtent();
+
+	scene::IAnimatedMeshSceneNode* weaponNode = smgr->addAnimatedMeshSceneNode(weaponMesh, camera, 10, core::vector3df(0,0,0), 
+			core::vector3df(-90, -90, 90));	
+	weaponNode->setMaterialFlag(video::EMF_LIGHTING, false);
+	weaponNode->setMaterialTexture(0, driver->getTexture("media/gun.jpg"));
+	weaponNode->setLoopMode(false);
 
 	f32 radius = tile_size.Z/7;
 	for(int i = 0; i < 4; i++)
@@ -116,7 +123,7 @@ void Game::loadScene()
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 
 				water_ball->setLoopMode(false);
-				water_ball->setFrameLoop(0, splash->getCell(i, j)*45);
+				water_ball->setFrameLoop(splash->getCell(i, j)*45, splash->getCell(i, j)*45);
 			}
 		}
 	}
