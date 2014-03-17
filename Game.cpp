@@ -7,6 +7,7 @@ class EventReceiver : public irr::IEventReceiver
 {
 	private:
 		irr::IrrlichtDevice* mDevice;
+
 	public:
 		EventReceiver(irr::IrrlichtDevice* device)
 		{
@@ -19,27 +20,29 @@ class EventReceiver : public irr::IEventReceiver
 			{
 				//Clavier
 				if(event.KeyInput.Key == irr::KEY_ESCAPE)
+				{
 					mDevice->closeDevice();
+					return true;
+				}
 			}
 			else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
 			{
-				//souris
-				wchar_t abs[5], ord[5];
-				swprintf(abs, sizeof(abs) / sizeof(*abs), L"%d", (event.MouseInput.X - 135));
-				swprintf(ord, sizeof(ord) / sizeof(*ord), L"%d", (event.MouseInput.Y - 55));
-
 				if(event.MouseInput.Event == irr::EMIE_LMOUSE_DOUBLE_CLICK)
-					mDevice->getGUIEnvironment()->addMessageBox(abs, ord);
+				{
+					return true;
+				}
 			}
+
 			return false;
 		}
-
 };
 
 Game::Game()
 {
 	device = createDevice(video::EDT_OPENGL,
 			core::dimension2d<u32>(680, 480), 32);
+
+	splash = new Splash();
 
 	if(device)
 	{
@@ -49,6 +52,13 @@ Game::Game()
 
 	camera = 0;
 	exitCode = OK;
+
+	splash->display();
+}
+
+Game::~Game()
+{
+	delete splash;
 }
 
 void Game::run()
@@ -93,7 +103,7 @@ void Game::render()
 
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
 
-	selected = colmgr->getSceneNodeFromCameraBB(camera);
+	selected = colmgr->getSceneNodeFromCameraBB(camera, 0xffffff);
 	if(selected && last_selected != selected)
 	{
 		if(last_selected)
@@ -118,7 +128,7 @@ void Game::loadScene()
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
 	core::vector3d<f32> tile_size = tile_mesh->getBoundingBox().getExtent();
 
-	f32 radius = tile_size.Z/3;
+	f32 radius = tile_size.Z/7;
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
@@ -126,7 +136,7 @@ void Game::loadScene()
 			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(
 					tile_mesh,
 					0,
-					-1,
+					0,
 					core::vector3df(i*tile_size.Z, j*tile_size.Z, 0),
 					core::vector3df(90, 0, 0)
 					);
@@ -144,14 +154,17 @@ void Game::loadScene()
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
 
+			if(splash->getCell(i, j) != 0)
+			{
 
-			f32 x = (tile_size.Z*i)-(radius/2);
-			f32 y = (tile_size.Z*j)-(radius/2);
-			scene::ISceneNode *water_ball = smgr->addSphereSceneNode(radius,
-					16, 0, -1, irr::core::vector3df(x, y, 0));
-			water_ball->setMaterialTexture(0,
-					driver->getTexture("media/WaterTexture.jpg"));
-			water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
+				f32 x = (tile_size.Z*i)-(radius/2);
+				f32 y = (tile_size.Z*j)-(radius/2);
+				scene::ISceneNode *water_ball = smgr->addSphereSceneNode(splash->getCell(i, j)*radius,
+						16, 0, 1, irr::core::vector3df(x, y, 0));
+				water_ball->setMaterialTexture(0,
+						driver->getTexture("media/WaterTexture.jpg"));
+				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
+			}
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <irrlicht/irrlicht.h>
+#include "Splash.hpp"
 
 class Game
 {
@@ -9,6 +10,7 @@ class Game
 	irr::video::IVideoDriver *driver;
 	irr::scene::ISceneManager *smgr;
 	irr::scene::ICameraSceneNode *camera;
+	Splash *splash;
 
 	int exitCode;
 
@@ -17,6 +19,7 @@ class Game
 
 	public:
 		Game();
+		~Game();
 
 		void run();
 		void update();
