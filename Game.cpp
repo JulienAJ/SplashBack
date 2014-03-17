@@ -1,6 +1,6 @@
 #include <irrlicht/irrlicht.h>
 #include "Game.hpp"
-#include "EventReceiver.cpp"
+#include "EventReceiver.hpp"
 
 using namespace irr;
 
