@@ -1,41 +1,8 @@
 #include <irrlicht/irrlicht.h>
 #include "Game.hpp"
+#include "EventReceiver.cpp"
 
 using namespace irr;
-
-class EventReceiver : public irr::IEventReceiver
-{
-	private:
-		irr::IrrlichtDevice* mDevice;
-
-	public:
-		EventReceiver(irr::IrrlichtDevice* device)
-		{
-			mDevice = device;
-		}
-
-		virtual bool OnEvent(const irr::SEvent& event)
-		{
-			if(event.EventType == irr::EET_KEY_INPUT_EVENT)
-			{
-				//Clavier
-				if(event.KeyInput.Key == irr::KEY_ESCAPE)
-				{
-					mDevice->closeDevice();
-					return true;
-				}
-			}
-			else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
-			{
-				if(event.MouseInput.Event == irr::EMIE_LMOUSE_DOUBLE_CLICK)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-};
 
 Game::Game()
 {
@@ -97,22 +64,7 @@ void Game::run()
 
 void Game::render()
 {
-	scene::ISceneCollisionManager *colmgr = smgr->getSceneCollisionManager();
-	static scene::ISceneNode *last_selected = 0;
-	scene::ISceneNode *selected = 0;
-
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
-
-	selected = colmgr->getSceneNodeFromCameraBB(camera, 0xffffff);
-	if(selected && last_selected != selected)
-	{
-		if(last_selected)
-			last_selected->setMaterialFlag(video::EMF_WIREFRAME, false);
-
-		selected->setMaterialFlag(video::EMF_WIREFRAME, true);
-		last_selected = selected;
-	}
-
 	smgr->drawAll();
 	device->getGUIEnvironment()->drawAll();
 	driver->endScene();
@@ -126,6 +78,7 @@ void Game::update()
 void Game::loadScene()
 {
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
+	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
 	core::vector3d<f32> tile_size = tile_mesh->getBoundingBox().getExtent();
 
 	f32 radius = tile_size.Z/7;
@@ -156,14 +109,14 @@ void Game::loadScene()
 
 			if(splash->getCell(i, j) != 0)
 			{
-
 				f32 x = (tile_size.Z*i)-(radius/2);
 				f32 y = (tile_size.Z*j)-(radius/2);
-				scene::ISceneNode *water_ball = smgr->addSphereSceneNode(splash->getCell(i, j)*radius,
-						16, 0, 1, irr::core::vector3df(x, y, 0));
-				water_ball->setMaterialTexture(0,
-						driver->getTexture("media/WaterTexture.jpg"));
+				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(ball_mesh, 0, 1, core::vector3df(x, y, 0));
 				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
+				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
+
+				water_ball->setLoopMode(false);
+				water_ball->setFrameLoop(0, splash->getCell(i, j)*45);
 			}
 		}
 	}
