@@ -113,17 +113,18 @@ void Game::loadScene()
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
 
-			if(splash->getCell(i, j) != 0)
+			int cell = splash->getCell(3-i, j);
+			if(cell != 0)
 			{
-				f32 x = (tile_size.Z*i);
-				f32 y = (tile_size.Z*j);
+				f32 x = (tile_size.Z*j);
+				f32 y = (tile_size.Z*i);
 
 				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(ball_mesh, 0, 1, core::vector3df(x, y, 0));
 				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 
 				water_ball->setLoopMode(false);
-				water_ball->setFrameLoop(splash->getCell(i, j)*45, splash->getCell(i, j)*45);
+				water_ball->setFrameLoop(cell*45, cell*45);
 			}
 		}
 	}
