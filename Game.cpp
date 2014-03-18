@@ -89,6 +89,18 @@ void Game::loadScene()
 	weaponNode->setMaterialTexture(0, driver->getTexture("media/gun.jpg"));
 	weaponNode->setLoopMode(false);
 
+	s32 count = weaponMesh->getAnimationCount();
+	c8 animationNames[count][256];
+
+	for ( s32 i = 0; i != count; ++i )
+	{
+		snprintf (animationNames[i], 64, "%s", weaponMesh->getAnimationName(i) );
+		device->getLogger()->log(animationNames[i], ELL_INFORMATION);
+	}
+
+	weaponNode->setMD2Animation(animationNames[2]);
+	weaponNode->setAnimationEndCallback(0);
+
 	s32 id = 1;
 	for(int i = 0; i < 4; i++)
 	{
