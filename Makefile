@@ -16,7 +16,10 @@ all: main.o Game.o Splash.o
 main.o: main.cpp
 	$(CXX) -c $^ $(CXXFLAGS)
 
-%.o: %.cpp %.hpp
+Game.o: Game.cpp Game.hpp EventReceiver.hpp
+	$(CXX) -c $< $(CXXFLAGS)
+
+Splash.o: Splash.cpp Splash.hpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 .PHONY: clean mrproper rebuild
