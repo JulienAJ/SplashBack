@@ -28,6 +28,7 @@ class EventReceiver : public irr::IEventReceiver
 				{
 					irr::scene::IAnimatedMeshSceneNode *selected = 0;
 					selected = static_cast<irr::scene::IAnimatedMeshSceneNode*>(mDevice->getSceneManager()->getSceneCollisionManager()->getSceneNodeFromCameraBB(mDevice->getSceneManager()->getActiveCamera(), 0xffffff));
+
 					if(selected)
 					{
 						// frame 0 -> 139
@@ -39,6 +40,8 @@ class EventReceiver : public irr::IEventReceiver
 						
 						selected->setFrameLoop(start, (start+45));
 					}
+
+					return true;
 				}
 			}
 
