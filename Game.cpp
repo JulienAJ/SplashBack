@@ -79,27 +79,26 @@ void Game::loadScene()
 {
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
 	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
-	scene::IAnimatedMeshMD2* weaponMesh = (scene::IAnimatedMeshMD2*) smgr->getMesh("media/gun.md2");
+	scene::IAnimatedMeshMD2* weaponMesh = static_cast<scene::IAnimatedMeshMD2*>(
+			smgr->getMesh("media/gun.md2"));
 	core::vector3d<f32> tile_size = tile_mesh->getBoundingBox().getExtent();
 
-	scene::IAnimatedMeshSceneNode* weaponNode = smgr->addAnimatedMeshSceneNode(weaponMesh, camera, 10, core::vector3df(0,0,0), 
-			core::vector3df(-90, -90, 90));	
+	scene::IAnimatedMeshSceneNode* weaponNode = smgr->addAnimatedMeshSceneNode(
+			weaponMesh, camera, 0, core::vector3df(0,0,0), core::vector3df(-90, -90, 90));
 	weaponNode->setMaterialFlag(video::EMF_LIGHTING, false);
 	weaponNode->setMaterialTexture(0, driver->getTexture("media/gun.jpg"));
 	weaponNode->setLoopMode(false);
 
+	s32 id = 1;
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
 		{
-			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(
-					tile_mesh,
-					0,
-					0,
-					core::vector3df(i*tile_size.Z, j*tile_size.Z, 0),
-					core::vector3df(90, 0, 0)
-					);
+			s32 x = j*tile_size.Z;
+			s32 y = (3-i)*tile_size.Z;
 
+			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(tile_mesh, 0, 0,
+					core::vector3df(x, y, 0), core::vector3df(90, 0, 0));
 			tile->setMaterialFlag(video::EMF_LIGHTING, false);
 			tile->setMaterialTexture(0, driver->getTexture("media/tile.jpg"));
 
@@ -107,25 +106,24 @@ void Game::loadScene()
 			tile->setTriangleSelector(selector);
 
 
-			scene::ISceneNodeAnimator *anim = smgr->createCollisionResponseAnimator(selector,
-					camera, core::vector3df(30, 60, 30), core::vector3df(0, 0, 0));
+			scene::ISceneNodeAnimator *anim = smgr->createCollisionResponseAnimator(
+					selector, camera, core::vector3df(30, 60, 30), core::vector3df(0, 0, 0));
 			selector->drop(); //plus besoin
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
 
-			int cell = splash->getCell(3-i, j);
+			int cell = splash->getCell(i, j);
 			if(cell != 0)
 			{
-				f32 x = (tile_size.Z*j);
-				f32 y = (tile_size.Z*i);
-
-				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(ball_mesh, 0, 1, core::vector3df(x, y, 0));
+				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(
+						ball_mesh, 0, id, core::vector3df(x, y, 0));
 				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
-
 				water_ball->setLoopMode(false);
 				water_ball->setFrameLoop(cell*45, cell*45);
 			}
+
+			id++;
 		}
 	}
 }
@@ -158,7 +156,7 @@ void Game::setupCamera()
 	keymap[7].Action = EKA_STRAFE_RIGHT;
 	keymap[7].KeyCode = KEY_RIGHT;
 
-	camera = smgr->addCameraSceneNodeFPS(0, 60.0f, 0.1f, -1, keymap, 8, true);
+	camera = smgr->addCameraSceneNodeFPS(0, 60.0f, 0.1f, 0, keymap, 8, true);
 	camera->setPosition(core::vector3df(0, 0, -50));
 }
 
