@@ -40,7 +40,7 @@ void Game::run()
 	loadScene();
 
 	// Evenements
-	EventReceiver eventReceiver(device);
+	EventReceiver eventReceiver(device, splash);
 	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
@@ -132,7 +132,7 @@ void Game::loadScene()
 				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 				water_ball->setLoopMode(false);
-				water_ball->setFrameLoop(cell*45, cell*45);
+				water_ball->setFrameLoop(0, cell*45);
 			}
 
 			id++;
