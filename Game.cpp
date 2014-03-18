@@ -119,7 +119,7 @@ void Game::loadScene()
 
 
 			scene::ISceneNodeAnimator *anim = smgr->createCollisionResponseAnimator(
-					selector, camera, core::vector3df(30, 60, 30), core::vector3df(0, 0, 0));
+					selector, camera, core::vector3df(30, 15, 30), core::vector3df(0, 0, 0));
 			selector->drop(); //plus besoin
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
