@@ -2,7 +2,10 @@
 #define GAME_HPP
 
 #include <irrlicht/irrlicht.h>
+#include <list>
 #include "Splash.hpp"
+
+typedef std::pair<irr::scene::ISceneNodeAnimator*, irr::scene::ISceneNode*> Animation;
 
 class Game
 {
@@ -10,12 +13,15 @@ class Game
 	irr::video::IVideoDriver *driver;
 	irr::scene::ISceneManager *smgr;
 	irr::scene::ICameraSceneNode *camera;
-	Splash *splash;
 
+	std::list<Animation> bulletsAnim;
+	Splash *splash;
+	irr::f32 tile_size;
 	int exitCode;
 
 	void setupCamera();
 	void loadScene();
+	void updateBoard();
 
 	public:
 		Game();
@@ -24,6 +30,7 @@ class Game
 		void run();
 		void update();
 		void render();
+		void play(int, int, bool = true);
 
 		enum { OK = 0, DEVICE_ERROR };
 		int getExitCode();

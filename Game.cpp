@@ -1,4 +1,6 @@
 #include <irrlicht/irrlicht.h>
+#include <cmath>
+#include <cstdio>
 #include "Game.hpp"
 #include "EventReceiver.hpp"
 
@@ -18,6 +20,7 @@ Game::Game()
 	}
 
 	camera = 0;
+	tile_size = 0;
 	exitCode = OK;
 
 	splash->display();
@@ -40,7 +43,7 @@ void Game::run()
 	loadScene();
 
 	// Evenements
-	EventReceiver eventReceiver(device, splash);
+	EventReceiver eventReceiver(device, this);
 	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
@@ -72,7 +75,99 @@ void Game::render()
 
 void Game::update()
 {
-	//animations, etc..
+	std::list<Animation>::iterator it;
+	std::list<std::list<Animation>::iterator> toErase;
+	std::list<std::list<Animation>::iterator>::iterator eraseIt;
+
+	for(it = bulletsAnim.begin(); it != bulletsAnim.end(); ++it)
+	{
+		if(it->first->hasFinished())
+		{
+			printf("finished (%p), remove(%p)\n", it->first, it->second);
+			it->first->drop();
+
+			core::vector3df position = it->second->getPosition();
+			int l = -((position.Y/tile_size)-3);
+			int c = position.X/tile_size;
+			printf("postion: %d, %d\n", l, c);
+
+			if(splash->getCell(l, c) != 0)
+				play(l, c, false);
+
+			it->second->remove();
+
+			toErase.push_back(it);
+		}
+	}
+
+	for(eraseIt = toErase.begin(); eraseIt != toErase.end(); ++eraseIt)
+		bulletsAnim.erase(*eraseIt);
+}
+
+void Game::play(int line, int column, bool userEvent)
+{
+	if(userEvent && !bulletsAnim.empty())
+		return;
+
+	std::list<Bullets> bullets;
+	std::list<Bullets>::iterator it;
+
+	splash->action(line, column, bullets, userEvent);
+	printf("play(%d, %d, %d)\n", line, column, userEvent);
+
+	for(it = bullets.begin(); it != bullets.end(); ++it)
+	{
+		int xs = it->source.first;
+		int ys = it->source.second;
+		core::vector3df start(ys*tile_size, (3-xs)*tile_size, 0);
+
+		printf("source: %f, %f (%d, %d)\n", start.X, start.Y, xs, ys);
+
+		for(int i = 0; i < 4; i++)
+		{
+			int x = it->finalPosition[i].first;
+			int y = it->finalPosition[i].second;
+
+			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
+			u32 time = sqrt((x-xs)*(x-xs)+(y-ys)*(y-ys))*1000; // 1 sec par case
+
+			printf("\tend %d: %f, %f (%d, %d) ; time = %d\n", i, end.X, end.Y, x, y, time);
+
+			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
+					start, end, time);
+			scene::ISceneNode *bullet = smgr->addSphereSceneNode(1, 16, 0, 0,
+					core::vector3df(x, y, 0));
+			bullet->setMaterialFlag(video::EMF_LIGHTING, false);
+			bullet->addAnimator(animator);
+
+			bulletsAnim.push_back(Animation(animator, bullet));
+		}
+	}
+
+	updateBoard();
+}
+
+void Game::updateBoard()
+{
+	scene::IAnimatedMeshSceneNode *node = 0;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			node = static_cast<scene::IAnimatedMeshSceneNode*>(
+						smgr->getSceneNodeFromId(i*4+j+1));
+
+			if(node)
+			{
+				int cell = splash->getCell(i, j);
+				if(cell == 0)
+					node->remove();
+				else
+					node->setFrameLoop(node->getEndFrame(), cell*45);
+			}
+		}
+	}
 }
 
 void Game::loadScene()
@@ -81,7 +176,7 @@ void Game::loadScene()
 	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
 	scene::IAnimatedMeshMD2* weaponMesh = static_cast<scene::IAnimatedMeshMD2*>(
 			smgr->getMesh("media/gun.md2"));
-	core::vector3d<f32> tile_size = tile_mesh->getBoundingBox().getExtent();
+	tile_size = tile_mesh->getBoundingBox().getExtent().Z;
 
 	scene::IAnimatedMeshSceneNode* weaponNode = smgr->addAnimatedMeshSceneNode(
 			weaponMesh, camera, 0, core::vector3df(0,0,0), core::vector3df(-90, -90, 90));
@@ -106,8 +201,8 @@ void Game::loadScene()
 	{
 		for(int j = 0; j < 4; j++)
 		{
-			s32 x = j*tile_size.Z;
-			s32 y = (3-i)*tile_size.Z;
+			s32 x = j*tile_size;
+			s32 y = (3-i)*tile_size;
 
 			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(tile_mesh, 0, 0,
 					core::vector3df(x, y, 0), core::vector3df(90, 0, 0));
