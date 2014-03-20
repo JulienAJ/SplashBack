@@ -4,10 +4,10 @@
 #include <list>
 #include <stdint.h>
 
-struct Bullet
+struct Bullets
 {
 	std::pair<int, int> source;
-	std::pair<int, int> final_position[4];
+	std::pair<int, int> finalPosition[4];
 };
 
 class Splash
@@ -16,13 +16,12 @@ class Splash
 		int** board;
 		int shots;
 		int level;
-		std::list<std::pair<int, int> > next_explosions;
 
 		void generate();
 		void explode_cli(int, int); // L, C
 		void handle_action_cli(int, int); //L, C
 
-		void explode(std::list<Bullet>&);
+		void explode(int, int, std::list<Bullets>&);
 		void handle_action(int, int);
 
 		uint32_t binDump();
@@ -42,8 +41,7 @@ class Splash
 		bool solve(std::list<std::pair<int, int> >&);
 
 		void action_cli(int, int); // L, C
-		bool action(int, int); // L, C
-		bool fetch_bullets(std::list<Bullet> &);
+		void action(int, int, std::list<Bullets>&, bool = true); // L, C
 };
 
 #endif

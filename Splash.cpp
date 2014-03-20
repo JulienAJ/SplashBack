@@ -154,87 +154,48 @@ void Splash::explode_cli(int line, int column)
 		shots++;
 }
 
-bool Splash::action(int line, int column)
-{
-	if(!next_explosions.empty())
-		return false;
-
-	handle_action(line, column);
-	shots--;
-
-	return true;
-}
-
-void Splash::handle_action(int line, int column)
-{
-	if(board[line][column] == 3)
-		next_explosions.push_back(std::pair<int, int>(line, column));
-	else
-		board[line][column]++;
-}
-
-void Splash::explode(std::list<Bullet> &bullets)
-{
-	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-	bool combo = false;
-	Bullet b;
-	std::list<std::pair<int, int> >::iterator it;
-	std::list<std::pair<int, int> > explosions(next_explosions);
-	next_explosions.clear();
-
-	for(it = explosions.begin(); it != explosions.end(); ++it)
-	{
-		int line = it->first;
-		int column = it->second;
-		b.source = std::pair<int, int>(line, column);
-
-		board[line][column] = 0;
-		for(int i = 0; i < 4; i++)
-		{
-			int l = line;
-			int c = column;
-			bool in_board;
-
-			do
-			{
-				l += deltas[i][0];
-				c += deltas[i][1];
-			} while((in_board = (l >= 0 && l < 4 && c >= 0 && c < 4)) &&
-					board[l][c] == 0);
-
-			if(in_board)
-			{
-				if(board[l][c] == 3)
-					combo = true;
-				handle_action(l, c);
-
-				std::pair<int, int> e(l, c);
-				b.final_position[i] = e;
-
-			}
-			else
-				b.final_position[i] =
-					std::pair<int, int>(l-deltas[i][0], c-deltas[i][1]);
-		}
-
-		bullets.push_back(b);
-	}
-
-	if(combo)
-		shots++;
-}
-
-bool Splash::fetch_bullets(std::list<Bullet> &bullets)
+void Splash::action(int line, int column, std::list<Bullets> &bullets, bool userEvent)
 {
 	bullets.clear();
 
-	if(next_explosions.empty())
-		return false;
+	if(board[line][column] == 3)
+		explode(line, column, bullets);
+	else
+		board[line][column]++;
 
-	explode(bullets);
-	return true;
+	if(userEvent)
+		shots--;
 }
 
+void Splash::explode(int line, int column, std::list<Bullets> &bullets)
+{
+	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+	Bullets b;
+	b.source = std::pair<int, int>(line, column);
+
+	board[line][column] = 0;
+	for(int i = 0; i < 4; i++)
+	{
+		int l = line;
+		int c = column;
+		bool in_board;
+
+		do
+		{
+			l += deltas[i][0];
+			c += deltas[i][1];
+		} while((in_board = (l >= 0 && l < 4 && c >= 0 && c < 4)) &&
+				board[l][c] == 0);
+
+		if(in_board)
+			b.finalPosition[i] = std::pair<int, int>(l, c);
+		else
+			b.finalPosition[i] =
+				std::pair<int, int>(l-deltas[i][0], c-deltas[i][1]);
+	}
+
+	bullets.push_back(b);
+}
 
 bool Splash::solve(std::list<std::pair<int, int> > &solution)
 {
