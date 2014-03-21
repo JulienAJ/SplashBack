@@ -115,8 +115,6 @@ void Game::play(int line, int column, bool userEvent)
 	Bullets bullets;
 	splash->action(line, column, bullets, userEvent);
 
-	//scene::IMesh *bullet_mesh = smgr->getMesh("media/elipse.3ds");
-
 	if(bullets.source.first != -1)
 	{
 		int xs = bullets.source.first;
@@ -286,6 +284,9 @@ void Game::setupCamera()
 
 	camera = smgr->addCameraSceneNodeFPS(0, 60.0f, 0.1f, 0, keymap, 8, true);
 	camera->setPosition(core::vector3df(0, 0, -50));
+
+	// Cursor
+	device->getCursorControl()->setActiveIcon(gui::ECI_CROSS);
 }
 
 int Game::getExitCode()
