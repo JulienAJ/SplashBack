@@ -129,7 +129,7 @@ void Game::play(int line, int column, bool userEvent)
 			int y = it->finalPosition[i].second;
 
 			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
-			u32 time = sqrt((x-xs)*(x-xs)+(y-ys)*(y-ys))*1000; // 1 sec par case
+			u32 time = sqrt((x-xs)*(x-xs)+(y-ys)*(y-ys))*400; // 400 ms par case
 
 			printf("\tend %d: %f, %f (%d, %d) ; time = %d\n", i, end.X, end.Y, x, y, time);
 
