@@ -17,7 +17,6 @@ class Splash
 		int shots;
 		int level;
 
-		void generate();
 		void explode_cli(int, int); // L, C
 		void handle_action_cli(int, int); //L, C
 
@@ -36,6 +35,7 @@ class Splash
 		void play();
 		void display();
 		bool empty();
+		void generate();
 		int getCell(int, int);
 
 		bool solve(std::list<std::pair<int, int> >&);
