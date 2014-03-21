@@ -37,6 +37,8 @@ class Splash
 		bool empty();
 		void generate();
 		int getCell(int, int);
+		int getLevel();
+		void nextLevel();
 
 		bool solve(std::list<std::pair<int, int> >&);
 

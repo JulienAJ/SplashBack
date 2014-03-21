@@ -1,6 +1,5 @@
 #include <irrlicht/irrlicht.h>
-#include <cmath>
-#include <cstdio>
+#include <iostream>
 #include "Game.hpp"
 #include "EventReceiver.hpp"
 
@@ -22,8 +21,6 @@ Game::Game()
 	camera = 0;
 	tile_size = 0;
 	exitCode = OK;
-
-	splash->display();
 }
 
 Game::~Game()
@@ -100,6 +97,12 @@ void Game::update()
 
 	for(eraseIt = toErase.begin(); eraseIt != toErase.end(); ++eraseIt)
 		bulletsAnim.erase(*eraseIt);
+
+	if(bulletsAnim.empty() && splash->empty())
+	{
+		splash->nextLevel();
+		loadBalls();
+	}
 }
 
 void Game::play(int line, int column, bool userEvent)
@@ -165,7 +168,6 @@ void Game::updateBoard()
 void Game::loadScene()
 {
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
-	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
 	scene::IAnimatedMeshMD2* weaponMesh = static_cast<scene::IAnimatedMeshMD2*>(
 			smgr->getMesh("media/gun.md2"));
 	tile_size = tile_mesh->getBoundingBox().getExtent().Z;
@@ -188,7 +190,6 @@ void Game::loadScene()
 	weaponNode->setMD2Animation(animationNames[2]);
 	weaponNode->setAnimationEndCallback(0);
 
-	s32 id = 1;
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
@@ -210,6 +211,23 @@ void Game::loadScene()
 			selector->drop(); //plus besoin
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
+		}
+	}
+
+	loadBalls();
+}
+
+void Game::loadBalls()
+{
+	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
+	s32 id = 1;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			s32 x = j*tile_size;
+			s32 y = (3-i)*tile_size;
 
 			int cell = splash->getCell(i, j);
 			if(cell != 0)
@@ -226,6 +244,7 @@ void Game::loadScene()
 		}
 	}
 }
+
 
 void Game::setupCamera()
 {

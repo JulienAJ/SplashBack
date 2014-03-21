@@ -282,3 +282,17 @@ int Splash::getCell(int i, int j)
 {
 	return board[i][j];
 }
+
+int Splash::getLevel()
+{
+	return level;
+}
+
+void Splash::nextLevel()
+{
+	if(empty())
+	{
+		generate();
+		level++;
+	}
+}

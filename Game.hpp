@@ -21,6 +21,7 @@ class Game
 
 	void setupCamera();
 	void loadScene();
+	void loadBalls();
 	void updateBoard();
 
 	public:
