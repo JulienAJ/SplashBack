@@ -14,6 +14,7 @@ class Game
 	irr::scene::ISceneManager *smgr;
 	irr::scene::ICameraSceneNode *camera;
 
+	irr::scene::IMesh *bullet_mesh;
 	std::list<Animation> bulletsAnim;
 	Splash *splash;
 	irr::f32 tile_size;

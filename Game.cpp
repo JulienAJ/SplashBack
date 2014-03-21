@@ -21,6 +21,7 @@ Game::Game()
 	camera = 0;
 	tile_size = 0;
 	exitCode = OK;
+	bullet_mesh = smgr->getMesh("media/elipse.3ds");
 }
 
 Game::~Game()
@@ -114,6 +115,8 @@ void Game::play(int line, int column, bool userEvent)
 	Bullets bullets;
 	splash->action(line, column, bullets, userEvent);
 
+	//scene::IMesh *bullet_mesh = smgr->getMesh("media/elipse.3ds");
+
 	if(bullets.source.first != -1)
 	{
 		int xs = bullets.source.first;
@@ -128,11 +131,17 @@ void Game::play(int line, int column, bool userEvent)
 			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
 			u32 time = (((x-xs)*deltas[i][0])+((y-ys)*deltas[i][1]))*400; // 400ms/case
 
+			int direction = 0;
+			if(ys == y)
+				direction = 90;
+
 			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
 					start, end, time);
-			scene::ISceneNode *bullet = smgr->addSphereSceneNode(1, 16, 0, 0,
-					core::vector3df(x, y, 0));
+			scene::IMeshSceneNode *bullet = smgr->addMeshSceneNode(
+					bullet_mesh, 0, 0, core::vector3df(x, y, 0), core::vector3df(0, 90, direction),
+					core::vector3df(1.5f, 1.5f, 1.5f));
 			bullet->setMaterialFlag(video::EMF_LIGHTING, false);
+			bullet->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 			bullet->addAnimator(animator);
 
 			bulletsAnim.push_back(Animation(animator, bullet));
@@ -238,6 +247,7 @@ void Game::loadBalls()
 				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 				water_ball->setLoopMode(false);
 				water_ball->setFrameLoop(0, cell*45);
+				water_ball->setAnimationSpeed(100);
 			}
 
 			id++;
