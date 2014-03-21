@@ -21,7 +21,7 @@ class Splash
 		void explode_cli(int, int); // L, C
 		void handle_action_cli(int, int); //L, C
 
-		void explode(int, int, std::list<Bullets>&);
+		Bullets explode(int, int);
 		void handle_action(int, int);
 
 		uint32_t binDump();
@@ -41,7 +41,7 @@ class Splash
 		bool solve(std::list<std::pair<int, int> >&);
 
 		void action_cli(int, int); // L, C
-		void action(int, int, std::list<Bullets>&, bool = true); // L, C
+		void action(int, int, Bullets&, bool = true); // L, C
 };
 
 #endif

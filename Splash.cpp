@@ -154,12 +154,13 @@ void Splash::explode_cli(int line, int column)
 		shots++;
 }
 
-void Splash::action(int line, int column, std::list<Bullets> &bullets, bool userEvent)
+void Splash::action(int line, int column, Bullets &bullets, bool userEvent)
 {
-	bullets.clear();
+	bullets.source.first = -1;
+	bullets.source.second = -1;
 
 	if(board[line][column] == 3)
-		explode(line, column, bullets);
+		bullets = explode(line, column);
 	else
 		board[line][column]++;
 
@@ -167,11 +168,11 @@ void Splash::action(int line, int column, std::list<Bullets> &bullets, bool user
 		shots--;
 }
 
-void Splash::explode(int line, int column, std::list<Bullets> &bullets)
+Bullets Splash::explode(int line, int column)
 {
 	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-	Bullets b;
-	b.source = std::pair<int, int>(line, column);
+	Bullets bullets;
+	bullets.source = std::pair<int, int>(line, column);
 
 	board[line][column] = 0;
 	for(int i = 0; i < 4; i++)
@@ -188,13 +189,13 @@ void Splash::explode(int line, int column, std::list<Bullets> &bullets)
 				board[l][c] == 0);
 
 		if(in_board)
-			b.finalPosition[i] = std::pair<int, int>(l, c);
+			bullets.finalPosition[i] = std::pair<int, int>(l, c);
 		else
-			b.finalPosition[i] =
+			bullets.finalPosition[i] =
 				std::pair<int, int>(l-deltas[i][0], c-deltas[i][1]);
 	}
 
-	bullets.push_back(b);
+	return bullets;
 }
 
 bool Splash::solve(std::list<std::pair<int, int> > &solution)

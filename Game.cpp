@@ -109,24 +109,23 @@ void Game::play(int line, int column, bool userEvent)
 	if(userEvent && !bulletsAnim.empty())
 		return;
 
-	std::list<Bullets> bullets;
-	std::list<Bullets>::iterator it;
-
+	Bullets bullets;
 	splash->action(line, column, bullets, userEvent);
+
 	printf("play(%d, %d, %d)\n", line, column, userEvent);
 
-	for(it = bullets.begin(); it != bullets.end(); ++it)
+	if(bullets.source.first != -1)
 	{
-		int xs = it->source.first;
-		int ys = it->source.second;
+		int xs = bullets.source.first;
+		int ys = bullets.source.second;
 		core::vector3df start(ys*tile_size, (3-xs)*tile_size, 0);
 
 		printf("source: %f, %f (%d, %d)\n", start.X, start.Y, xs, ys);
 
 		for(int i = 0; i < 4; i++)
 		{
-			int x = it->finalPosition[i].first;
-			int y = it->finalPosition[i].second;
+			int x = bullets.finalPosition[i].first;
+			int y = bullets.finalPosition[i].second;
 
 			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
 			u32 time = sqrt((x-xs)*(x-xs)+(y-ys)*(y-ys))*400; // 400 ms par case
@@ -156,7 +155,7 @@ void Game::updateBoard()
 		for(int j = 0; j < 4; j++)
 		{
 			node = static_cast<scene::IAnimatedMeshSceneNode*>(
-						smgr->getSceneNodeFromId(i*4+j+1));
+					smgr->getSceneNodeFromId(i*4+j+1));
 
 			if(node)
 			{
