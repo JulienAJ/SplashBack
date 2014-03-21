@@ -83,13 +83,11 @@ void Game::update()
 	{
 		if(it->first->hasFinished())
 		{
-			printf("finished (%p), remove(%p)\n", it->first, it->second);
 			it->first->drop();
 
 			core::vector3df position = it->second->getPosition();
 			int l = -((position.Y/tile_size)-3);
 			int c = position.X/tile_size;
-			printf("postion: %d, %d\n", l, c);
 
 			if(splash->getCell(l, c) != 0)
 				play(l, c, false);
@@ -113,15 +111,11 @@ void Game::play(int line, int column, bool userEvent)
 	Bullets bullets;
 	splash->action(line, column, bullets, userEvent);
 
-	printf("play(%d, %d, %d)\n", line, column, userEvent);
-
 	if(bullets.source.first != -1)
 	{
 		int xs = bullets.source.first;
 		int ys = bullets.source.second;
 		core::vector3df start(ys*tile_size, (3-xs)*tile_size, 0);
-
-		printf("source: %f, %f (%d, %d)\n", start.X, start.Y, xs, ys);
 
 		for(int i = 0; i < 4; i++)
 		{
@@ -129,9 +123,7 @@ void Game::play(int line, int column, bool userEvent)
 			int y = bullets.finalPosition[i].second;
 
 			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
-			u32 time = ((x-xs)*deltas[i][0])+((y-ys)*deltas[i][1])*400; // 400ms/case
-
-			printf("\tend %d: %f, %f (%d, %d) ; time = %d, time1 = %d\n", i, end.X, end.Y, x, y, time, time1);
+			u32 time = (((x-xs)*deltas[i][0])+((y-ys)*deltas[i][1]))*400; // 400ms/case
 
 			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
 					start, end, time);
