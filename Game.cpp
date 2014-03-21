@@ -109,6 +109,7 @@ void Game::play(int line, int column, bool userEvent)
 	if(userEvent && !bulletsAnim.empty())
 		return;
 
+	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
 	splash->action(line, column, bullets, userEvent);
 
@@ -128,9 +129,9 @@ void Game::play(int line, int column, bool userEvent)
 			int y = bullets.finalPosition[i].second;
 
 			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
-			u32 time = sqrt((x-xs)*(x-xs)+(y-ys)*(y-ys))*400; // 400 ms par case
+			u32 time = ((x-xs)*deltas[i][0])+((y-ys)*deltas[i][1])*400; // 400ms/case
 
-			printf("\tend %d: %f, %f (%d, %d) ; time = %d\n", i, end.X, end.Y, x, y, time);
+			printf("\tend %d: %f, %f (%d, %d) ; time = %d, time1 = %d\n", i, end.X, end.Y, x, y, time, time1);
 
 			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
 					start, end, time);
