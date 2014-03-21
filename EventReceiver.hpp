@@ -1,6 +1,5 @@
 #include <irrlicht/irrlicht.h>
 #include "Splash.hpp"
-#include <cstdio>
 
 class EventReceiver : public irr::IEventReceiver
 {
@@ -41,7 +40,6 @@ class EventReceiver : public irr::IEventReceiver
 					if(selected)
 					{
 						irr::s32 id = selected->getID()-1;
-						printf("click: %d, %d\n", id/4, id%4);
 
 						mGame->play(id/4, id%4);
 					}
