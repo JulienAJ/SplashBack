@@ -16,7 +16,7 @@ all: main.o Game.o Splash.o
 main.o: main.cpp
 	$(CXX) -c $^ $(CXXFLAGS)
 
-Game.o: Game.cpp Game.hpp EventReceiver.hpp
+Game.o: Game.cpp Game.hpp EventReceiver.hpp VProgressBar.hpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 Splash.o: Splash.cpp Splash.hpp

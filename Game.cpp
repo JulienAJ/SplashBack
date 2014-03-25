@@ -22,11 +22,14 @@ Game::Game()
 	tile_size = 0;
 	exitCode = OK;
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
+	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));	
+	shots->setValue(splash->getShots());
 }
 
 Game::~Game()
 {
 	delete splash;
+	delete shots;
 }
 
 void Game::run()
@@ -67,6 +70,7 @@ void Game::render()
 {
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
 	smgr->drawAll();
+	shots->draw();
 	device->getGUIEnvironment()->drawAll();
 	driver->endScene();
 }
@@ -104,6 +108,7 @@ void Game::update()
 		splash->nextLevel();
 		loadBalls();
 	}
+	shots->setValue(splash->getShots());
 }
 
 void Game::play(int line, int column, bool userEvent)

@@ -4,6 +4,7 @@
 #include <irrlicht/irrlicht.h>
 #include <list>
 #include "Splash.hpp"
+#include "VProgressBar.hpp"
 
 typedef std::pair<irr::scene::ISceneNodeAnimator*, irr::scene::ISceneNode*> Animation;
 
@@ -13,6 +14,8 @@ class Game
 	irr::video::IVideoDriver *driver;
 	irr::scene::ISceneManager *smgr;
 	irr::scene::ICameraSceneNode *camera;
+
+	VProgressBar *shots;
 
 	irr::scene::IMesh *bullet_mesh;
 	std::list<Animation> bulletsAnim;
