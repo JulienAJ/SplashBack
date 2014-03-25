@@ -44,6 +44,8 @@ class Splash
 
 		void action_cli(int, int); // L, C
 		void action(int, int, Bullets&, bool = true); // L, C
+
+		int getShots();
 };
 
 #endif

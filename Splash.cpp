@@ -296,3 +296,8 @@ void Splash::nextLevel()
 		level++;
 	}
 }
+
+int Splash::getShots()
+{
+	return shots;
+}
