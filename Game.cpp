@@ -24,6 +24,7 @@ Game::Game()
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
 	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));	
 	shots->setValue(splash->getShots());
+	shots->setCritical(5);
 }
 
 Game::~Game()
