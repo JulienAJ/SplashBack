@@ -109,49 +109,66 @@ bool Splash::empty()
 	return true;
 }
 
-void Splash::action_cli(int line, int column)
+void Splash::action_cli(int line, int column, bool userEvent)
 {
-	handle_action_cli(line, column);
-	shots--;
-}
+	Bullets b;
 
-void Splash::handle_action_cli(int line, int column)
-{
 	if(board[line][column] == 3)
-		explode_cli(line, column);
-	else
+	{
+		b = explode(line, column);
+		if(b.source.first != -1)
+			bulletsList.push_back(b);
+	}
+	else if(!userEvent)
 		board[line][column]++;
+
+	if(userEvent)
+	{
+		shots--;
+		move_bullets();
+	}
 }
 
-void Splash::explode_cli(int line, int column)
+void Splash::move_bullets()
 {
-	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-	bool combo = false;
+	std::list<Bullets>::iterator it;
+	std::list<std::list<Bullets>::iterator> toErase;
+	std::list<std::list<Bullets>::iterator>::iterator eraseIt;
+	bool combo;
+	int bonusShots = 0;
 
-	board[line][column] = 0;
-	for(int i = 0; i < 4; i++)
+	while(!bulletsList.empty())
 	{
-		int l = line;
-		int c = column;
-		bool in_board;
-
-		do
+		for(it = bulletsList.begin(); it != bulletsList.end(); ++it)
 		{
-			l += deltas[i][0];
-			c += deltas[i][1];
-		} while((in_board = (l >= 0 && l < 4 && c >= 0 && c < 4)) &&
-				board[l][c] == 0);
+			combo = false;
 
-		if(in_board)
-		{
-			if(board[l][c] == 3)
-				combo = true;
-			handle_action_cli(l, c);
+			for(int i = 0; i < 4; i++)
+			{
+				int l = it->finalPosition[i].first;
+				int c = it->finalPosition[i].second;
+				if(board[l][c] != 0)
+				{
+					if(board[l][c] == 3)
+						combo = true;
+
+					action_cli(l, c, false);
+				}
+			}
+
+			if(combo)
+				bonusShots++;
+
+			toErase.push_back(it);
 		}
+
+		for(eraseIt = toErase.begin(); eraseIt != toErase.end(); ++eraseIt)
+			bulletsList.erase(*eraseIt);
+		toErase.clear();
 	}
 
-	if(combo)
-		shots++;
+	if(--bonusShots > 0)
+		shots += bonusShots;
 }
 
 void Splash::action(int line, int column, Bullets &bullets, bool userEvent)
@@ -159,13 +176,20 @@ void Splash::action(int line, int column, Bullets &bullets, bool userEvent)
 	bullets.source.first = -1;
 	bullets.source.second = -1;
 
+	if(userEvent)
+	{
+		uint32_t dump = binDump();
+		action_cli(line, column);
+		restoreBoard(dump);
+	}
+
 	if(board[line][column] == 3)
 		bullets = explode(line, column);
 	else
 		board[line][column]++;
 
-	if(userEvent)
-		shots--;
+	//	if(userEvent)
+	//		shots--;
 }
 
 Bullets Splash::explode(int line, int column)

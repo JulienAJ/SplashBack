@@ -16,9 +16,10 @@ class Splash
 		int** board;
 		int shots;
 		int level;
+		std::list<Bullets> bulletsList;
 
-		void explode_cli(int, int); // L, C
 		void handle_action_cli(int, int); //L, C
+		void move_bullets();
 
 		Bullets explode(int, int);
 		void handle_action(int, int);
@@ -42,7 +43,7 @@ class Splash
 
 		bool solve(std::list<std::pair<int, int> >&);
 
-		void action_cli(int, int); // L, C
+		void action_cli(int, int, bool = true); // L, C
 		void action(int, int, Bullets&, bool = true); // L, C
 
 		int getShots();
