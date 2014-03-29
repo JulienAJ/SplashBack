@@ -22,9 +22,12 @@ Game::Game()
 	tile_size = 0;
 	exitCode = OK;
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
+
 	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));	
 	shots->setValue(splash->getShots());
 	shots->setCritical(5);
+
+	font = device->getGUIEnvironment()->getFont("media/ScoreFont.png");
 }
 
 Game::~Game()
@@ -72,6 +75,7 @@ void Game::render()
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
 	smgr->drawAll();
 	shots->draw();
+	font->draw(getLevel(), core::rect<s32>(0, 0, 300, 100), video::SColor(255, 255, 255, 255));
 	device->getGUIEnvironment()->drawAll();
 	driver->endScene();
 }
@@ -298,4 +302,12 @@ void Game::setupCamera()
 int Game::getExitCode()
 {
 	return exitCode;
+}
+
+core::stringw Game::getLevel()
+{
+	wchar_t ret[16];
+
+	swprintf(ret, sizeof(ret)/sizeof(*ret), L"Level %d", splash->getLevel());
+	return (core::stringw)ret;
 }

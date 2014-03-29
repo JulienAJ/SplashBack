@@ -15,6 +15,8 @@ class Game
 	irr::scene::ISceneManager *smgr;
 	irr::scene::ICameraSceneNode *camera;
 
+	gui::IGUIFont* font;
+
 	VProgressBar *shots;
 
 	irr::scene::IMesh *bullet_mesh;
@@ -27,6 +29,8 @@ class Game
 	void loadScene();
 	void loadBalls();
 	void updateBoard();
+
+	irr::core::stringw getLevel();
 
 	public:
 		Game();
