@@ -184,6 +184,11 @@ void Game::updateBoard()
 
 void Game::loadScene()
 {
+	//SkyBox
+	smgr->addSkyBoxSceneNode(driver->getTexture("media/skybox/top.JPG"), driver->getTexture("media/skybox/bottom.JPG"),
+			driver->getTexture("media/skybox/left.JPG"), driver->getTexture("media/skybox/right.JPG"),
+			driver->getTexture("media/skybox/front.JPG"), driver->getTexture("media/skybox/back.JPG"));
+
 	scene::IMesh *tile_mesh = smgr->getMesh("media/tile.3ds");
 	scene::IAnimatedMeshMD2* weaponMesh = static_cast<scene::IAnimatedMeshMD2*>(
 			smgr->getMesh("media/gun.md2"));
