@@ -70,8 +70,11 @@ class VProgressBar
 
 	void setValue(s32 value)
 	{
-		current = value;
-		draw();
+		if(overBar || value <= max)
+		{
+			current = value;
+			draw();
+		}
 	}
 
 	void setMax(s32 value)

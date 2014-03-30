@@ -26,6 +26,7 @@ Game::Game()
 	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));	
 	shots->setValue(splash->getShots());
 	shots->setCritical(5);
+	shots->setOverBar(true);
 
 	font = device->getGUIEnvironment()->getFont("media/ScoreFont.png");
 }
