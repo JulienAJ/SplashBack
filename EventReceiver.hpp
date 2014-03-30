@@ -42,6 +42,15 @@ class EventReceiver : public irr::IEventReceiver
 						irr::s32 id = selected->getID()-1;
 
 						mGame->play(id/4, id%4);
+
+						//Animation Gun
+						irr::scene::IAnimatedMeshSceneNode* gun = 0;
+						irr::core::list<irr::scene::ISceneNode*> children;
+						children = smgr->getActiveCamera()->getChildren();
+						gun = static_cast<irr::scene::IAnimatedMeshSceneNode*>(*children.getLast());
+
+						gun->setMD2Animation("pow");
+						gun->setAnimationEndCallback(0);
 					}
 
 					return true;

@@ -200,6 +200,8 @@ void Game::loadScene()
 	weaponNode->setMaterialTexture(0, driver->getTexture("media/gun.jpg"));
 	weaponNode->setLoopMode(false);
 
+	camera->addChild(weaponNode);
+
 	s32 count = weaponMesh->getAnimationCount();
 	c8 animationNames[count][256];
 
