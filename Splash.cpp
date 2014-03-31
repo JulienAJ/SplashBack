@@ -267,10 +267,8 @@ uint32_t Splash::binDump()
 	{
 		for(int j = 0; j < 4; j++)
 		{
-			/*
-			 * i*4+j: n°case
-			 * 2: bits necessaires pour stocker la valeur d'une case (val max = 3)
-			 */
+			// i*4+j: n°case
+			// 2: bits necessaires pour stocker la valeur d'une case (val max = 3)
 			int shift = (i*4+j)*2;
 			boardDump |= board[i][j]<<shift;
 		}
