@@ -132,8 +132,6 @@ void Splash::action_cli(int line, int column, bool userEvent)
 void Splash::move_bullets()
 {
 	std::list<Bullets>::iterator it;
-	std::list<std::list<Bullets>::iterator> toErase;
-	std::list<std::list<Bullets>::iterator>::iterator eraseIt;
 	bool combo;
 	int bonusShots = 0;
 
@@ -159,12 +157,8 @@ void Splash::move_bullets()
 			if(combo)
 				bonusShots++;
 
-			toErase.push_back(it);
+			bulletsList.erase(it++);
 		}
-
-		for(eraseIt = toErase.begin(); eraseIt != toErase.end(); ++eraseIt)
-			bulletsList.erase(*eraseIt);
-		toErase.clear();
 	}
 
 	if(--bonusShots > 0)

@@ -84,8 +84,6 @@ void Game::render()
 void Game::update()
 {
 	std::list<Animation>::iterator it;
-	std::list<std::list<Animation>::iterator> toErase;
-	std::list<std::list<Animation>::iterator>::iterator eraseIt;
 
 	for(it = bulletsAnim.begin(); it != bulletsAnim.end(); ++it)
 	{
@@ -101,19 +99,16 @@ void Game::update()
 				play(l, c, false);
 
 			it->second->remove();
-
-			toErase.push_back(it);
+			bulletsAnim.erase(it++);
 		}
 	}
-
-	for(eraseIt = toErase.begin(); eraseIt != toErase.end(); ++eraseIt)
-		bulletsAnim.erase(*eraseIt);
 
 	if(bulletsAnim.empty() && splash->empty())
 	{
 		splash->nextLevel();
 		loadBalls();
 	}
+
 	shots->setValue(splash->getShots());
 }
 
