@@ -310,6 +310,7 @@ void Splash::nextLevel()
 	{
 		generate();
 		level++;
+		shots++;
 	}
 }
 
