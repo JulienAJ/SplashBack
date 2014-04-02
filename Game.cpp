@@ -49,7 +49,7 @@ void Game::run()
 	loadScene();
 
 	// Evenements
-	EventReceiver eventReceiver(device, this);
+	EventReceiver eventReceiver(device, this, splash);
 	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
@@ -165,14 +165,28 @@ void Game::updateBoard()
 		{
 			node = static_cast<scene::IAnimatedMeshSceneNode*>(
 					smgr->getSceneNodeFromId(i*4+j+1));
+			int cell = splash->getCell(i, j);
 
 			if(node)
 			{
-				int cell = splash->getCell(i, j);
 				if(cell == 0)
 					node->remove();
 				else
 					node->setFrameLoop(node->getEndFrame(), cell*45);
+			}
+			else if(splash->getCell(i, j) != 0)
+			{
+				scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
+				s32 x = j*tile_size;
+				s32 y = (3-i)*tile_size;
+
+				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(
+						ball_mesh, 0, (i*4)+j+1, core::vector3df(x, y, 0));
+				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
+				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
+				water_ball->setLoopMode(false);
+				water_ball->setFrameLoop(0, cell*45);
+				water_ball->setAnimationSpeed(100);
 			}
 		}
 	}
@@ -212,6 +226,7 @@ void Game::loadScene()
 	weaponNode->setMD2Animation(animationNames[2]);
 	weaponNode->setAnimationEndCallback(0);
 
+	s32 id = 1;
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
@@ -219,7 +234,7 @@ void Game::loadScene()
 			s32 x = j*tile_size;
 			s32 y = (3-i)*tile_size;
 
-			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(tile_mesh, 0, 0,
+			scene::IMeshSceneNode *tile = smgr->addMeshSceneNode(tile_mesh, 0, id+17,
 					core::vector3df(x, y, 0), core::vector3df(90, 0, 0));
 			tile->setMaterialFlag(video::EMF_LIGHTING, false);
 			tile->setMaterialTexture(0, driver->getTexture("media/tile.jpg"));
@@ -233,6 +248,8 @@ void Game::loadScene()
 			selector->drop(); //plus besoin
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
+
+			id++;
 		}
 	}
 

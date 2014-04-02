@@ -1,17 +1,20 @@
 #include <irrlicht/irrlicht.h>
+#include "Game.hpp"
 #include "Splash.hpp"
 
 class EventReceiver : public irr::IEventReceiver
 {
 	private:
-		irr::IrrlichtDevice* mDevice;
+		irr::IrrlichtDevice *mDevice;
 		Game *mGame;
+		Splash *mSplash;
 
 	public:
-		EventReceiver(irr::IrrlichtDevice* device, Game *game)
+		EventReceiver(irr::IrrlichtDevice* device, Game *game, Splash *splash)
 		{
 			mDevice = device;
 			mGame = game;
+			mSplash = splash;
 		}
 
 		virtual bool OnEvent(const irr::SEvent& event)
@@ -40,8 +43,16 @@ class EventReceiver : public irr::IEventReceiver
 					if(selected)
 					{
 						irr::s32 id = selected->getID()-1;
+						bool tile = (id > 16);
 
-						mGame->play(id/4, id%4);
+						if(tile)
+							id -= 17;
+
+						int line = id/4;
+						int column = id%4;
+
+						if(!tile || mSplash->getCell(line, column) == 0)
+							mGame->play(line, column);
 
 						//Animation Gun
 						irr::scene::IAnimatedMeshSceneNode* gun = 0;
