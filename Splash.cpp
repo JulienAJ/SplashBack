@@ -137,7 +137,8 @@ void Splash::move_bullets()
 
 	while(!bulletsList.empty())
 	{
-		for(it = bulletsList.begin(); it != bulletsList.end(); ++it)
+		it = bulletsList.begin()
+		while(it != bulletsList.end())
 		{
 			combo = false;
 
