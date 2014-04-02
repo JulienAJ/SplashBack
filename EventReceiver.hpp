@@ -34,7 +34,7 @@ class EventReceiver : public irr::IEventReceiver
 					irr::scene::IAnimatedMeshSceneNode *selected = 0;
 					selected = static_cast<irr::scene::IAnimatedMeshSceneNode*>(
 							smgr->getSceneCollisionManager()->getSceneNodeFromCameraBB(
-								smgr->getActiveCamera(), 0xffffff)
+								smgr->getActiveCamera(), 0xffffffff)
 							);
 
 					if(selected)
