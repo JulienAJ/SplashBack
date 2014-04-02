@@ -83,24 +83,26 @@ void Game::render()
 
 void Game::update()
 {
-	std::list<Animation>::iterator it;
+	std::list<std::pair<Animation, int> >::iterator it = bulletsAnim.begin();
 
-	for(it = bulletsAnim.begin(); it != bulletsAnim.end(); ++it)
+	while(it != bulletsAnim.end())
 	{
-		if(it->first->hasFinished())
+		if(it->first.first->hasFinished())
 		{
-			it->first->drop();
+			it->first.first->drop();
 
-			core::vector3df position = it->second->getPosition();
+			core::vector3df position = it->first.second->getPosition();
 			int l = -((position.Y/tile_size)-3);
 			int c = position.X/tile_size;
 
 			if(splash->getCell(l, c) != 0)
-				play(l, c, false);
+				play(l, c, false, it->second+1);
 
-			it->second->remove();
+			it->first.second->remove();
 			bulletsAnim.erase(it++);
 		}
+		else
+			++it;
 	}
 
 	if(bulletsAnim.empty() && splash->empty())
@@ -112,14 +114,14 @@ void Game::update()
 	shots->setValue(splash->getShots());
 }
 
-void Game::play(int line, int column, bool userEvent)
+void Game::play(int line, int column, bool userEvent, int lastComboLevel)
 {
 	if(userEvent && !bulletsAnim.empty())
 		return;
 
 	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
-	splash->action(line, column, bullets, userEvent);
+	splash->action(line, column, bullets, userEvent, lastComboLevel);
 
 	if(bullets.source.first != -1)
 	{
@@ -141,14 +143,16 @@ void Game::play(int line, int column, bool userEvent)
 
 			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
 					start, end, time);
+
 			scene::IMeshSceneNode *bullet = smgr->addMeshSceneNode(
-					bullet_mesh, 0, 0, core::vector3df(x, y, 0), core::vector3df(0, 90, direction),
-					core::vector3df(1.5f, 1.5f, 1.5f));
+					bullet_mesh, 0, -1,  core::vector3df(x, y, 0),
+					core::vector3df(0, 90, direction), core::vector3df(1.5f, 1.5f, 1.5f));
 			bullet->setMaterialFlag(video::EMF_LIGHTING, false);
 			bullet->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 			bullet->addAnimator(animator);
 
-			bulletsAnim.push_back(Animation(animator, bullet));
+			bulletsAnim.push_back(std::pair<Animation, int>(
+						Animation(animator, bullet), bullets.lastComboLevel));
 		}
 	}
 

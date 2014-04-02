@@ -8,6 +8,7 @@ struct Bullets
 {
 	std::pair<int, int> source;
 	std::pair<int, int> finalPosition[4];
+	int lastComboLevel;
 };
 
 class Splash
@@ -16,6 +17,7 @@ class Splash
 		int** board;
 		int shots;
 		int level;
+		int currentComboLevel;
 		std::list<Bullets> bulletsList;
 
 		void handle_action_cli(int, int); //L, C
@@ -44,7 +46,7 @@ class Splash
 		bool solve(std::list<std::pair<int, int> >&);
 
 		void action_cli(int, int, bool = true); // L, C
-		void action(int, int, Bullets&, bool = true); // L, C
+		void action(int, int, Bullets&, bool = true, int = 0); // L, C
 
 		int getShots();
 };

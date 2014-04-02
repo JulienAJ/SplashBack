@@ -165,25 +165,30 @@ void Splash::move_bullets()
 		shots += bonusShots;
 }
 
-void Splash::action(int line, int column, Bullets &bullets, bool userEvent)
+void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
+		int comboLevel)
 {
 	bullets.source.first = -1;
 	bullets.source.second = -1;
 
 	if(userEvent)
 	{
-		uint32_t dump = binDump();
-		action_cli(line, column);
-		restoreBoard(dump);
+		currentComboLevel = 0;
+		shots--;
 	}
 
 	if(board[line][column] == 3)
+	{
+		if(!userEvent && comboLevel > currentComboLevel)
+		{
+			currentComboLevel = comboLevel;
+			shots++;
+		}
+
 		bullets = explode(line, column);
+	}
 	else
 		board[line][column]++;
-
-	//	if(userEvent)
-	//		shots--;
 }
 
 Bullets Splash::explode(int line, int column)
@@ -191,6 +196,7 @@ Bullets Splash::explode(int line, int column)
 	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
 	bullets.source = std::pair<int, int>(line, column);
+	bullets.lastComboLevel = currentComboLevel;
 
 	board[line][column] = 0;
 	for(int i = 0; i < 4; i++)

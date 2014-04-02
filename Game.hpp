@@ -20,7 +20,7 @@ class Game
 	VProgressBar *shots;
 
 	irr::scene::IMesh *bullet_mesh;
-	std::list<Animation> bulletsAnim;
+	std::list<std::pair<Animation, int> > bulletsAnim;
 	Splash *splash;
 	irr::f32 tile_size;
 	int exitCode;
@@ -39,7 +39,7 @@ class Game
 		void run();
 		void update();
 		void render();
-		void play(int, int, bool = true);
+		void play(int, int, bool = true, int = 0);
 
 		enum { OK = 0, DEVICE_ERROR };
 		int getExitCode();
