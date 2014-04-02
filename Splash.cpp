@@ -137,7 +137,7 @@ void Splash::move_bullets()
 
 	while(!bulletsList.empty())
 	{
-		it = bulletsList.begin()
+		it = bulletsList.begin();
 		while(it != bulletsList.end())
 		{
 			combo = false;
@@ -183,7 +183,8 @@ void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
 		if(!userEvent && comboLevel > currentComboLevel)
 		{
 			currentComboLevel = comboLevel;
-			shots++;
+			if(comboLevel > 1)
+				shots++;
 		}
 
 		bullets = explode(line, column);
