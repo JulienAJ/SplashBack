@@ -1,4 +1,5 @@
 SplashBack Game
+
 3D Interface - Irrlicht
 
-Licence: GPL V3 (voir fichier LICENSE)
+License: GPL V3 (see LICENSE file)
