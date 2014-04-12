@@ -6,7 +6,12 @@
 #include "Splash.hpp"
 #include "VProgressBar.hpp"
 
-typedef std::pair<irr::scene::ISceneNodeAnimator*, irr::scene::ISceneNode*> Animation;
+struct Animation
+{
+	irr::scene::ISceneNodeAnimator * animator;
+	irr::scene::ISceneNode *node;
+	int comboLevel;
+};
 
 class Game
 {
@@ -20,7 +25,7 @@ class Game
 	VProgressBar *shots;
 
 	irr::scene::IMesh *bullet_mesh;
-	std::list<std::pair<Animation, int> > bulletsAnim;
+	std::list<Animation> bulletsAnim;
 	Splash *splash;
 	irr::f32 tile_size;
 	int exitCode;

@@ -53,7 +53,7 @@ void Splash::generate()
 void Splash::display()
 {
 	std::cout << "Splash Back : Niveau " << level << '\n';
-	
+
 	for(int i = 0; i < 4; i++)
 	{
 		for(int y = 0; y < 4; y++)

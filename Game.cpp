@@ -23,7 +23,7 @@ Game::Game()
 	exitCode = OK;
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
 
-	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));	
+	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));
 	shots->setValue(splash->getShots());
 	shots->setCritical(5);
 	shots->setOverBar(true);
@@ -83,22 +83,22 @@ void Game::render()
 
 void Game::update()
 {
-	std::list<std::pair<Animation, int> >::iterator it = bulletsAnim.begin();
+	std::list<Animation>::iterator it = bulletsAnim.begin();
 
 	while(it != bulletsAnim.end())
 	{
-		if(it->first.first->hasFinished())
+		if(it->animator->hasFinished())
 		{
-			it->first.first->drop();
+			it->animator->drop();
 
-			core::vector3df position = it->first.second->getPosition();
+			core::vector3df position = it->node->getPosition();
 			int l = -((position.Y/tile_size)-3);
 			int c = position.X/tile_size;
 
 			if(splash->getCell(l, c) != 0)
-				play(l, c, false, it->second+1);
+				play(l, c, false, it->comboLevel+1);
 
-			it->first.second->remove();
+			it->node->remove();
 			bulletsAnim.erase(it++);
 		}
 		else
@@ -121,6 +121,7 @@ void Game::play(int line, int column, bool userEvent, int lastComboLevel)
 
 	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
+	Animation anim;
 	splash->action(line, column, bullets, userEvent, lastComboLevel);
 
 	if(bullets.source.first != -1)
@@ -151,8 +152,10 @@ void Game::play(int line, int column, bool userEvent, int lastComboLevel)
 			bullet->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
 			bullet->addAnimator(animator);
 
-			bulletsAnim.push_back(std::pair<Animation, int>(
-						Animation(animator, bullet), bullets.lastComboLevel));
+			anim.animator = animator;
+			anim.node = bullet;
+			anim.comboLevel = bullets.lastComboLevel;
+			bulletsAnim.push_back(anim);
 		}
 	}
 
