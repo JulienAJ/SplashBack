@@ -9,6 +9,7 @@ Splash::Splash()
 {
 	shots = 10;
 	level = 1;
+	currentComboLevel = 0;
 
 	board = new int*[4];
 	for(int i = 0; i < 4; i++)
@@ -21,6 +22,7 @@ Splash::Splash(int shots)
 {
 	this->shots = shots;
 	level = 1;
+	currentComboLevel = 0;
 
 	board = new int*[4];
 	for(int i = 0; i < 4; i++)
@@ -116,10 +118,9 @@ void Splash::action_cli(int line, int column, bool userEvent)
 	if(board[line][column] == 3)
 	{
 		b = explode(line, column);
-		if(b.source.first != -1)
-			bulletsList.push_back(b);
+		bulletsList.push_back(b);
 	}
-	else if(!userEvent)
+	else
 		board[line][column]++;
 
 	if(userEvent)
@@ -132,38 +133,32 @@ void Splash::action_cli(int line, int column, bool userEvent)
 void Splash::move_bullets()
 {
 	std::list<Bullets>::iterator it;
-	bool combo;
-	int bonusShots = 0;
 
 	while(!bulletsList.empty())
 	{
 		it = bulletsList.begin();
 		while(it != bulletsList.end())
 		{
-			combo = false;
-
 			for(int i = 0; i < 4; i++)
 			{
 				int l = it->finalPosition[i].first;
 				int c = it->finalPosition[i].second;
 				if(board[l][c] != 0)
 				{
-					if(board[l][c] == 3)
-						combo = true;
+					if(board[l][c] == 3 && it->lastComboLevel > currentComboLevel)
+						currentComboLevel = it->lastComboLevel;
 
 					action_cli(l, c, false);
 				}
 			}
 
-			if(combo)
-				bonusShots++;
-
 			bulletsList.erase(it++);
 		}
 	}
 
-	if(--bonusShots > 0)
-		shots += bonusShots;
+	if(currentComboLevel > 1)
+		shots += currentComboLevel;
+	currentComboLevel = 0;
 }
 
 void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
@@ -211,8 +206,7 @@ Bullets Splash::explode(int line, int column)
 		{
 			l += deltas[i][0];
 			c += deltas[i][1];
-		} while((in_board = (l >= 0 && l < 4 && c >= 0 && c < 4)) &&
-				board[l][c] == 0);
+		} while((in_board = inBoard(l, c)) && board[l][c] == 0);
 
 		if(in_board)
 			bullets.finalPosition[i] = std::pair<int, int>(l, c);
@@ -325,4 +319,14 @@ void Splash::nextLevel()
 int Splash::getShots()
 {
 	return shots;
+}
+
+inline bool Splash::inBoard(int l, int c)
+{
+	return (l >= 0 && l < 4 && c >= 0 && c < 4);
+}
+
+inline bool Splash::onEdge(int l, int c)
+{
+	return (l == 0 || l == 3 || c == 0 || c == 3);
 }

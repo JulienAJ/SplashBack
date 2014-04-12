@@ -45,6 +45,10 @@ class Splash
 
 		bool solve(std::list<std::pair<int, int> >&);
 
+		inline static bool inBoard(int, int);
+		inline static bool onEdge(int, int);
+		void getFinalPosition(int&, int&, int);
+
 		void action_cli(int, int, bool = true); // L, C
 		void action(int, int, Bullets&, bool = true, int = 0); // L, C
 
