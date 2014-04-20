@@ -11,6 +11,8 @@ struct Bullets
 	int lastComboLevel;
 };
 
+static const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
 class Splash
 {
 	private:
@@ -19,6 +21,7 @@ class Splash
 		int level;
 		int currentComboLevel;
 		std::list<Bullets> bulletsList;
+
 
 		void handle_action_cli(int, int); //L, C
 		void move_bullets();
@@ -45,9 +48,9 @@ class Splash
 
 		bool solve(std::list<std::pair<int, int> >&);
 
-		inline static bool inBoard(int, int);
-		inline static bool onEdge(int, int);
-		void getFinalPosition(int&, int&, int);
+		static bool inBoard(int, int);
+		static bool onEdge(int, int, int);
+		std::pair<int, int> getFinalPosition(int, int, int);
 
 		void action_cli(int, int, bool = true); // L, C
 		void action(int, int, Bullets&, bool = true, int = 0); // L, C

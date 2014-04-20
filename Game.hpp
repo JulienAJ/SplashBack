@@ -11,6 +11,7 @@ struct Animation
 	irr::scene::ISceneNodeAnimator * animator;
 	irr::scene::ISceneNode *node;
 	int comboLevel;
+	int direction;
 };
 
 class Game
@@ -34,6 +35,8 @@ class Game
 	void loadScene();
 	void loadBalls();
 	void updateBoard();
+
+	Animation createAnimation(std::pair<int, int>&, std::pair<int, int>&, int, int);
 
 	irr::core::stringw getLevel();
 

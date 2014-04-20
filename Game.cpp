@@ -97,6 +97,13 @@ void Game::update()
 
 			if(splash->getCell(l, c) != 0)
 				play(l, c, false, it->comboLevel+1);
+			else if(!splash->onEdge(l, c, it->direction))
+			{
+				std::pair<int, int> source(l, c);
+				std::pair<int, int> fp(splash->getFinalPosition(l, c, it->direction));
+				bulletsAnim.push_back(createAnimation(source, fp, it->comboLevel,
+							it->direction));
+			}
 
 			it->node->remove();
 			bulletsAnim.erase(it++);
@@ -119,47 +126,55 @@ void Game::play(int line, int column, bool userEvent, int lastComboLevel)
 	if(userEvent && !bulletsAnim.empty())
 		return;
 
-	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
-	Animation anim;
 	splash->action(line, column, bullets, userEvent, lastComboLevel);
 
 	if(bullets.source.first != -1)
 	{
-		int xs = bullets.source.first;
-		int ys = bullets.source.second;
-		core::vector3df start(ys*tile_size, (3-xs)*tile_size, 0);
-
 		for(int i = 0; i < 4; i++)
-		{
-			int x = bullets.finalPosition[i].first;
-			int y = bullets.finalPosition[i].second;
-
-			core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
-			u32 time = (((x-xs)*deltas[i][0])+((y-ys)*deltas[i][1]))*400; // 400ms/case
-
-			int direction = 0;
-			if(ys == y)
-				direction = 90;
-
-			scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
-					start, end, time);
-
-			scene::IMeshSceneNode *bullet = smgr->addMeshSceneNode(
-					bullet_mesh, 0, -1,  core::vector3df(x, y, 0),
-					core::vector3df(0, 90, direction), core::vector3df(1.5f, 1.5f, 1.5f));
-			bullet->setMaterialFlag(video::EMF_LIGHTING, false);
-			bullet->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
-			bullet->addAnimator(animator);
-
-			anim.animator = animator;
-			anim.node = bullet;
-			anim.comboLevel = bullets.lastComboLevel;
-			bulletsAnim.push_back(anim);
-		}
+			bulletsAnim.push_back(createAnimation(bullets.source,
+						bullets.finalPosition[i], bullets.lastComboLevel, i));
 	}
 
 	updateBoard();
+}
+
+Animation Game::createAnimation(std::pair<int, int> &source,
+		std::pair<int, int> &finalPosition, int comboLevel, int direction)
+{
+	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+	Animation anim;
+
+	int xs = source.first;
+	int ys = source.second;
+	core::vector3df start(ys*tile_size, (3-xs)*tile_size, 0);
+
+	int x = finalPosition.first;
+	int y = finalPosition.second;
+
+	core::vector3df end(y*tile_size, (3-x)*tile_size, 0);
+	u32 time = (((x-xs)*deltas[direction][0])+((y-ys)*deltas[direction][1]))*400; // 400ms/case
+
+	int orientation = 0;
+	if(ys == y)
+		orientation = 90;
+
+	scene::ISceneNodeAnimator *animator = smgr->createFlyStraightAnimator(
+			start, end, time);
+
+	scene::IMeshSceneNode *bullet = smgr->addMeshSceneNode(bullet_mesh, 0, -1,
+			core::vector3df(x, y, 0), core::vector3df(0, 90, orientation),
+			core::vector3df(1.5f, 1.5f, 1.5f));
+	bullet->setMaterialFlag(video::EMF_LIGHTING, false);
+	bullet->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
+	bullet->addAnimator(animator);
+
+	anim.animator = animator;
+	anim.node = bullet;
+	anim.comboLevel = comboLevel;
+	anim.direction = direction;
+
+	return anim;
 }
 
 void Game::updateBoard()

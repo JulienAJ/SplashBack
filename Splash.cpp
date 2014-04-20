@@ -133,26 +133,39 @@ void Splash::action_cli(int line, int column, bool userEvent)
 void Splash::move_bullets()
 {
 	std::list<Bullets>::iterator it;
+	bool toErase;
 
 	while(!bulletsList.empty())
 	{
 		it = bulletsList.begin();
 		while(it != bulletsList.end())
 		{
+			toErase = true;
+
 			for(int i = 0; i < 4; i++)
 			{
 				int l = it->finalPosition[i].first;
 				int c = it->finalPosition[i].second;
-				if(board[l][c] != 0)
+				if(l != -1)
 				{
-					if(board[l][c] == 3 && it->lastComboLevel > currentComboLevel)
-						currentComboLevel = it->lastComboLevel;
+					if(board[l][c] != 0)
+					{
+						if(board[l][c] == 3 && it->lastComboLevel > currentComboLevel)
+							currentComboLevel = it->lastComboLevel;
 
-					action_cli(l, c, false);
+						action_cli(l, c, false);
+						it->finalPosition[i].first = -1;
+					}
+					else if(!onEdge(l, c, i))
+					{
+						it->finalPosition[i] = getFinalPosition(l, c, i);
+						toErase = false;
+					}
 				}
 			}
 
-			bulletsList.erase(it++);
+			if(toErase)
+				bulletsList.erase(it++);
 		}
 	}
 
@@ -190,32 +203,34 @@ void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
 
 Bullets Splash::explode(int line, int column)
 {
-	const int deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	Bullets bullets;
 	bullets.source = std::pair<int, int>(line, column);
 	bullets.lastComboLevel = currentComboLevel;
 
 	board[line][column] = 0;
 	for(int i = 0; i < 4; i++)
-	{
-		int l = line;
-		int c = column;
-		bool in_board;
-
-		do
-		{
-			l += deltas[i][0];
-			c += deltas[i][1];
-		} while((in_board = inBoard(l, c)) && board[l][c] == 0);
-
-		if(in_board)
-			bullets.finalPosition[i] = std::pair<int, int>(l, c);
-		else
-			bullets.finalPosition[i] =
-				std::pair<int, int>(l-deltas[i][0], c-deltas[i][1]);
-	}
+		bullets.finalPosition[i] = getFinalPosition(line, column, i);
 
 	return bullets;
+}
+
+std::pair<int, int> Splash::getFinalPosition(int l, int c, int directionId)
+{
+	bool in_board;
+
+	do
+	{
+		l += deltas[directionId][0];
+		c += deltas[directionId][1];
+	} while((in_board = inBoard(l, c)) && board[l][c] == 0);
+
+	if(!in_board)
+	{
+		l -= deltas[directionId][0];
+		c -= deltas[directionId][1];
+	}
+
+	return std::pair<int, int>(l, c);
 }
 
 bool Splash::solve(std::list<std::pair<int, int> > &solution)
@@ -224,7 +239,7 @@ bool Splash::solve(std::list<std::pair<int, int> > &solution)
 	int shots_save = shots;
 
 	solution.clear();
-	bool ret = solveBT(solution, shots);
+	bool ret = solveBT(solution, 4);
 	restoreBoard(dump);
 	shots = shots_save;
 
@@ -326,7 +341,7 @@ inline bool Splash::inBoard(int l, int c)
 	return (l >= 0 && l < 4 && c >= 0 && c < 4);
 }
 
-inline bool Splash::onEdge(int l, int c)
+bool Splash::onEdge(int l, int c, int direction)
 {
-	return (l == 0 || l == 3 || c == 0 || c == 3);
+	return !inBoard(l+deltas[direction][0], c+deltas[direction][1]);
 }
