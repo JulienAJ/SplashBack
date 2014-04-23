@@ -61,9 +61,6 @@ void Game::run()
 		update();
 		render();
 
-		if(state == OVER)
-			gameOver();
-
 		//fps
 		int fps = driver->getFPS();
 		if(last_fps != fps)
@@ -127,8 +124,8 @@ void Game::update()
 			loadBalls();
 		}
 
-		if(score == 0)
-			state = OVER;
+		if(state == PLAYING && score == 0)
+			gameOver();
 	}
 }
 
@@ -221,6 +218,23 @@ void Game::updateBoard()
 				water_ball->setFrameLoop(0, cell*45);
 				water_ball->setAnimationSpeed(100);
 			}
+		}
+	}
+}
+
+void Game::clearBoard()
+{
+	scene::IAnimatedMeshSceneNode *node = 0;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			node = static_cast<scene::IAnimatedMeshSceneNode*>(
+					smgr->getSceneNodeFromId(i*4+j+1));
+
+			if(node)
+				node->remove();
 		}
 	}
 }
@@ -354,6 +368,16 @@ void Game::setupCamera()
 	device->getCursorControl()->setActiveIcon(gui::ECI_CROSS);
 }
 
+void Game::restart()
+{
+	bulletsAnim.clear();
+	state = PLAYING;
+	splash->restart();
+
+	clearBoard();
+	updateBoard();
+}
+
 int Game::getExitCode()
 {
 	return exitCode;
@@ -374,4 +398,7 @@ core::stringw Game::getLevel()
 
 void Game::gameOver()
 {
+	state = OVER;
+	device->getGUIEnvironment()->addMessageBox(L"GAME OVER", L"RECOMMENCER ?", true,
+			irr::gui::EMBF_YES | irr::gui::EMBF_NO);
 }

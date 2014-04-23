@@ -18,6 +18,7 @@ class Splash
 	private:
 		int** board;
 		int shots;
+		const int initialShots;
 		int level;
 		int currentComboLevel;
 		std::list<Bullets> bulletsList;
@@ -45,6 +46,7 @@ class Splash
 		int getCell(int, int);
 		int getLevel();
 		void nextLevel();
+		void restart();
 
 		bool solve(std::list<std::pair<int, int> >&);
 

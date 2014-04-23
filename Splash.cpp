@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "Splash.hpp"
 
-Splash::Splash()
+Splash::Splash() : initialShots(10)
 {
 	shots = 10;
 	level = 1;
@@ -18,7 +18,7 @@ Splash::Splash()
 	generate();
 }
 
-Splash::Splash(int shots)
+Splash::Splash(int shots) : initialShots(shots)
 {
 	this->shots = shots;
 	level = 1;
@@ -344,4 +344,12 @@ inline bool Splash::inBoard(int l, int c)
 bool Splash::onEdge(int l, int c, int direction)
 {
 	return !inBoard(l+deltas[direction][0], c+deltas[direction][1]);
+}
+
+void Splash::restart()
+{
+	level = 1;
+	shots = initialShots;
+	bulletsList.clear();
+	generate();
 }

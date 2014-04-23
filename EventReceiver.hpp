@@ -68,6 +68,19 @@ class EventReceiver : public irr::IEventReceiver
 					return true;
 				}
 			}
+			else if(event.EventType == irr::EET_GUI_EVENT)
+			{
+				if(event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_YES)
+				{
+					mGame->restart();
+					return true;
+				}
+				else if(event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_NO)
+				{
+					mDevice->closeDevice();
+					return true;
+				}
+			}
 
 			return false;
 		}

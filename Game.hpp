@@ -36,6 +36,7 @@ class Game
 	void loadScene();
 	void loadBalls();
 	void updateBoard();
+	void clearBoard();
 
 	Animation createAnimation(std::pair<int, int>&, std::pair<int, int>&, int, int);
 
@@ -50,6 +51,7 @@ class Game
 		void render();
 		void play(int, int, bool = true, int = 0);
 		void gameOver();
+		void restart();
 
 		enum { OK = 0, DEVICE_ERROR };
 		enum { PLAYING = 0, OVER };
