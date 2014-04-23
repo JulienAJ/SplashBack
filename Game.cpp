@@ -113,17 +113,20 @@ void Game::update()
 			++it;
 	}
 
-	if(bulletsAnim.empty() && splash->empty())
-	{
-		splash->nextLevel();
-		loadBalls();
-	}
-
 	int score = splash->getShots();
 	shots->setValue(score);
 
-	if(score == 0)
-		state = OVER;
+	if(bulletsAnim.empty())
+	{
+		if(splash->empty())
+		{
+			splash->nextLevel();
+			loadBalls();
+		}
+
+		if(score == 0)
+			state = OVER;
+	}
 }
 
 void Game::play(int line, int column, bool userEvent, int lastComboLevel)
