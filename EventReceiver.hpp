@@ -30,7 +30,8 @@ class EventReceiver : public irr::IEventReceiver
 			}
 			else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
 			{
-				if(event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN)
+				if(event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN &&
+						mGame->getState() != Game::OVER)
 				{
 					irr::scene::ISceneManager *smgr = mDevice->getSceneManager();
 

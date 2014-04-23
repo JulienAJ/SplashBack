@@ -30,6 +30,7 @@ class Game
 	Splash *splash;
 	irr::f32 tile_size;
 	int exitCode;
+	int state;
 
 	void setupCamera();
 	void loadScene();
@@ -50,7 +51,9 @@ class Game
 		void play(int, int, bool = true, int = 0);
 
 		enum { OK = 0, DEVICE_ERROR };
+		enum { PLAYING = 0, OVER };
 		int getExitCode();
+		int getState();
 };
 
 #endif

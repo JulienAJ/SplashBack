@@ -21,6 +21,7 @@ Game::Game()
 	camera = 0;
 	tile_size = 0;
 	exitCode = OK;
+	state = PLAYING;
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
 
 	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));
@@ -118,7 +119,11 @@ void Game::update()
 		loadBalls();
 	}
 
-	shots->setValue(splash->getShots());
+	int score = splash->getShots();
+	shots->setValue(score);
+
+	if(score == 0)
+		state = OVER;
 }
 
 void Game::play(int line, int column, bool userEvent, int lastComboLevel)
@@ -346,6 +351,11 @@ void Game::setupCamera()
 int Game::getExitCode()
 {
 	return exitCode;
+}
+
+int Game::getState()
+{
+	return state;
 }
 
 core::stringw Game::getLevel()
