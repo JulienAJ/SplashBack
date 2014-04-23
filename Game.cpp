@@ -61,6 +61,9 @@ void Game::run()
 		update();
 		render();
 
+		if(state == OVER)
+			gameOver();
+
 		//fps
 		int fps = driver->getFPS();
 		if(last_fps != fps)
@@ -367,4 +370,8 @@ core::stringw Game::getLevel()
 
 	swprintf(ret, sizeof(ret)/sizeof(*ret), L"Level %d", splash->getLevel());
 	return (core::stringw)ret;
+}
+
+void Game::gameOver()
+{
 }

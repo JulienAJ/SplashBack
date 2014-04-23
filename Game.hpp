@@ -49,6 +49,7 @@ class Game
 		void update();
 		void render();
 		void play(int, int, bool = true, int = 0);
+		void gameOver();
 
 		enum { OK = 0, DEVICE_ERROR };
 		enum { PLAYING = 0, OVER };
