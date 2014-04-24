@@ -135,8 +135,7 @@ void Game::play(int line, int column, bool userEvent, int lastComboLevel)
 	if(userEvent && !bulletsAnim.empty())
 		return;
 
-	Bullets bullets;
-	splash->action(line, column, bullets, userEvent, lastComboLevel);
+	Bullets bullets = splash->action(line, column, userEvent, lastComboLevel);
 
 	if(bullets.source.first != -1)
 	{

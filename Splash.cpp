@@ -174,11 +174,13 @@ void Splash::move_bullets()
 	currentComboLevel = 0;
 }
 
-void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
+Bullets Splash::action(int line, int column, bool userEvent,
 		int comboLevel)
 {
+	Bullets bullets;
 	bullets.source.first = -1;
 	bullets.source.second = -1;
+	bullets.lastComboLevel = 0;
 
 	if(userEvent)
 	{
@@ -199,6 +201,8 @@ void Splash::action(int line, int column, Bullets &bullets, bool userEvent,
 	}
 	else
 		board[line][column]++;
+
+	return bullets;
 }
 
 Bullets Splash::explode(int line, int column)

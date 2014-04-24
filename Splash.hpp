@@ -55,7 +55,7 @@ class Splash
 		std::pair<int, int> getFinalPosition(int, int, int);
 
 		void action_cli(int, int, bool = true); // L, C
-		void action(int, int, Bullets&, bool = true, int = 0); // L, C
+		Bullets action(int, int, bool = true, int = 0); // L, C
 
 		int getShots();
 };
