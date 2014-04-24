@@ -25,6 +25,7 @@ class Game
 
 	VProgressBar *shots;
 
+	irr::scene::IAnimatedMesh *ball_mesh;
 	irr::scene::IMesh *bullet_mesh;
 	std::list<Animation> bulletsAnim;
 	Splash *splash;

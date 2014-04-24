@@ -23,6 +23,7 @@ Game::Game()
 	exitCode = OK;
 	state = PLAYING;
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
+	ball_mesh = 0;
 
 	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));
 	shots->setValue(splash->getShots());
@@ -206,7 +207,9 @@ void Game::updateBoard()
 			}
 			else if(splash->getCell(i, j) != 0)
 			{
-				scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
+				if(!ball_mesh)
+					ball_mesh = smgr->getMesh("media/v4.md3");
+
 				s32 x = j*tile_size;
 				s32 y = (3-i)*tile_size;
 
@@ -305,7 +308,7 @@ void Game::loadScene()
 
 void Game::loadBalls()
 {
-	scene::IAnimatedMesh *ball_mesh = smgr->getMesh("media/v4.md3");
+	ball_mesh = smgr->getMesh("media/v4.md3");
 	s32 id = 1;
 
 	for(int i = 0; i < 4; i++)
