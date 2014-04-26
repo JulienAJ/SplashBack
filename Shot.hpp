@@ -2,13 +2,14 @@
 #define SHOT_HPP
 
 #include <irrlicht/irrlicht.h>
+#include <vector>
 
 class Shot
 {
 	private:
 		irr::scene::IMeshSceneNode *node;
 		irr::scene::ISceneNodeAnimator *flyAnimator;
-		irr::scene::ISceneNodeAnimatorList collisionAnimators;
+		std::vector<irr::scene::ISceneNodeAnimator*> collisionAnimators;
 	
 	public:
 		Shot(irr::scene::ISceneManager*);
@@ -20,9 +21,10 @@ class Shot
 		void shoot(irr::scene::ISceneManager*);
 		irr::scene::IMeshSceneNode* getShotSceneNode() const;
 		void addCollisionResponseAnimator(
-				irr::scene::ISceneNodeAnimatorCollisionResponse*);
-		bool removeCollisionResponseAnimator(
-				const irr::scene::ISceneNodeAnimatorCollisionResponse*);
+				irr::scene::ISceneNodeAnimatorCollisionResponse*,
+				int = -1);
+		void removeCollisionResponseAnimators();
+		void removeCollisionResponseAnimator(int);
 };
 
 #endif

@@ -45,6 +45,7 @@ class Game : public irr::scene::ICollisionCallback
 
 	Animation createAnimation(std::pair<int, int>&, std::pair<int, int>&, int, int);
 	void createWaterBall(int, int, int);
+	void removeWaterBall(irr::scene::IAnimatedMeshSceneNode*);
 
 	irr::core::stringw getLevel();
 

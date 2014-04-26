@@ -35,35 +35,15 @@ class EventReceiver : public irr::IEventReceiver
 				{
 					irr::scene::ISceneManager *smgr = mDevice->getSceneManager();
 
-					irr::scene::IAnimatedMeshSceneNode *selected = 0;
-					selected = static_cast<irr::scene::IAnimatedMeshSceneNode*>(
-							smgr->getSceneCollisionManager()->getSceneNodeFromCameraBB(
-								smgr->getActiveCamera(), 0xffffffff)
-							);
+					mGame->shoot();
 
-					if(selected)
-					{
-						irr::s32 id = selected->getID()-1;
-						bool tile = (id > 16);
-
-						if(tile)
-							id -= 17;
-
-						int line = id/4;
-						int column = id%4;
-
-						if(!tile || mSplash->getCell(line, column) == 0)
-							mGame->play(line, column);
-
-						//Animation Gun
-						irr::scene::IAnimatedMeshSceneNode* gun = 0;
-						irr::core::list<irr::scene::ISceneNode*> children;
-						children = smgr->getActiveCamera()->getChildren();
-						gun = static_cast<irr::scene::IAnimatedMeshSceneNode*>(*children.getLast());
-
-						gun->setMD2Animation("pow");
-						gun->setAnimationEndCallback(0);
-					}
+					//Animation Gun
+					irr::scene::IAnimatedMeshSceneNode* gun = 0;
+					irr::core::list<irr::scene::ISceneNode*> children;
+					children = smgr->getActiveCamera()->getChildren();
+					gun = static_cast<irr::scene::IAnimatedMeshSceneNode*>(*children.getLast());
+					gun->setMD2Animation("pow");
+					gun->setAnimationEndCallback(0);
 
 					return true;
 				}

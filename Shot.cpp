@@ -8,6 +8,7 @@ Shot::Shot(irr::scene::ISceneManager *smgr)
 	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->setVisible(false);
 	flyAnimator = 0;
+	collisionAnimators.resize(16, 0); //16 balles
 }
 
 Shot::~Shot()
@@ -25,13 +26,11 @@ bool Shot::hasFinished() const
 
 void Shot::stop()
 {
-	printf("Stop called !\n");
 	if(flyAnimator)
 	{
 		node->removeAnimator(flyAnimator);
 		flyAnimator = 0;
 
-		node->setPosition(irr::core::vector3df(0, 0, 0));
 		node->setVisible(false);
 	}
 }
@@ -67,33 +66,32 @@ irr::scene::IMeshSceneNode* Shot::getShotSceneNode() const
 }
 
 void Shot::addCollisionResponseAnimator(
-		irr::scene::ISceneNodeAnimatorCollisionResponse *anim)
+		irr::scene::ISceneNodeAnimatorCollisionResponse *anim,
+		int nodeID)
 {
 	if(anim)
 	{
 		node->addAnimator(anim);
-		collisionAnimators.push_back(anim);
+		if(nodeID != -1)
+			collisionAnimators[nodeID-1] = anim;
 	}
 }
 
-bool Shot::removeCollisionResponseAnimator(
-		const irr::scene::ISceneNodeAnimatorCollisionResponse *anim)
+void Shot::removeCollisionResponseAnimator(int nodeID)
 {
-	if(!anim)
-		return false;
+	int n = nodeID-1;
+	node->removeAnimator(collisionAnimators[n]);
+	collisionAnimators[n] = 0;
+}
 
-	irr::scene::ISceneNodeAnimatorList::Iterator it;
+void Shot::removeCollisionResponseAnimators()
+{
+	std::vector<irr::scene::ISceneNodeAnimator*>::iterator it;
 	it = collisionAnimators.begin();
 
 	for(; it != collisionAnimators.end(); ++it)
 	{
-		if(*it == anim)
-		{
-			collisionAnimators.erase(it);
-			node->removeAnimator(*it);
-			return true;
-		}
+		node->removeAnimator(*it);
+		*it = 0;
 	}
-
-	return false;
 }

@@ -206,7 +206,7 @@ void Game::updateBoard()
 			if(node)
 			{
 				if(cell == 0)
-					node->remove();
+					removeWaterBall(node);
 				else
 					node->setFrameLoop(node->getEndFrame(), cell*45);
 			}
@@ -230,11 +230,11 @@ void Game::clearBoard()
 					smgr->getSceneNodeFromId(i*4+j+1));
 
 			if(node)
-				node->remove();
+				removeWaterBall(node);
 		}
 	}
 
-	// TODO: shot -> remove all animators
+	shot->removeCollisionResponseAnimators();
 }
 
 void Game::loadScene()
@@ -289,10 +289,16 @@ void Game::loadScene()
 
 			const core::aabbox3d<f32>& box = tile->getBoundingBox();
 			core::vector3df radius = box.MaxEdge - box.getCenter();
-			scene::ISceneNodeAnimator *anim = smgr->createCollisionResponseAnimator(
-					selector, camera, radius, core::vector3df(0, 0, 0));
-			selector->drop(); //plus besoin
+			scene::ISceneNodeAnimatorCollisionResponse *anim =
+				smgr->createCollisionResponseAnimator(selector, camera, radius,
+						core::vector3df(0, 0, 0));
 			camera->addAnimator(anim);
+			anim->drop(); //plus besoin
+
+			anim = smgr->createCollisionResponseAnimator(selector,
+					shot->getShotSceneNode(), radius, core::vector3df(0, 0, 0));
+			selector->drop(); //plus besoin
+			shot->addCollisionResponseAnimator(anim);
 			anim->drop(); //plus besoin
 
 			id++;
@@ -343,8 +349,19 @@ void Game::createWaterBall(int size, int line, int column)
 				core::vector3df(.2f, .2f, .2f)*size, core::vector3df(0, 0, 0));
 	selector->drop(); //plus besoin
 	anim->setCollisionCallback(this);
-	shot->addCollisionResponseAnimator(anim);
+	shot->addCollisionResponseAnimator(anim, id);
 	anim->drop(); //plus besoin
+}
+
+void Game::removeWaterBall(scene::IAnimatedMeshSceneNode *node)
+{
+	s32 id = node->getID();
+
+	if(id < 1 || id > 16)
+		return;
+
+	shot->removeCollisionResponseAnimator(id);
+	node->remove();
 }
 
 void Game::setupCamera()
@@ -425,12 +442,21 @@ void Game::shoot()
 bool Game::onCollision(const scene::ISceneNodeAnimatorCollisionResponse &animator)
 {
 	shot->stop();
-	shot->removeCollisionResponseAnimator(&animator);
 
 	scene::ISceneNode *node = animator.getCollisionNode();
-	s32 n = node->getID()-1;
+	s32 id = node->getID()-1;
 
-	printf("%d, %d\n", n/4, n%4);
+	bool tile = (id > 16);
+
+	if(tile)
+		id -= 17;
+
+	int line = id/4;
+	int column = id%4;
+	int cell = splash->getCell(line, column);
+
+	if(!tile || cell == 0)
+		play(line, column);
 
 	return true;
 }
