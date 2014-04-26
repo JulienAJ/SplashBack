@@ -12,7 +12,6 @@ Game::Game()
 			core::dimension2d<u32>(680, 480), 32);
 
 	splash = new Splash();
-	splash->display();
 
 	if(device)
 	{
