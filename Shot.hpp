@@ -8,6 +8,7 @@ class Shot
 {
 	private:
 		irr::scene::IMeshSceneNode *node;
+		irr::core::vector3df radius;
 		irr::scene::ISceneNodeAnimator *flyAnimator;
 		std::vector<irr::scene::ISceneNodeAnimator*> collisionAnimators;
 	
@@ -25,6 +26,7 @@ class Shot
 				int = -1);
 		void removeCollisionResponseAnimators();
 		void removeCollisionResponseAnimator(int);
+		irr::core::vector3df getRadius() const;
 };
 
 #endif

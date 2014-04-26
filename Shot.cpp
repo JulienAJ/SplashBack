@@ -9,6 +9,9 @@ Shot::Shot(irr::scene::ISceneManager *smgr)
 	node->setVisible(false);
 	flyAnimator = 0;
 	collisionAnimators.resize(16, 0); //16 balles
+
+	const irr::core::aabbox3d<irr::f32>& box = node->getBoundingBox();
+	radius = box.MaxEdge - box.getCenter();
 }
 
 Shot::~Shot()
@@ -32,6 +35,7 @@ void Shot::stop()
 		flyAnimator = 0;
 
 		node->setVisible(false);
+		node->setPosition(irr::core::vector3df(0, 0, 30));
 	}
 }
 
@@ -58,6 +62,7 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	node->addAnimator(flyAnimator);
 	flyAnimator->drop();
 	node->setVisible(true);
+	node->setPosition(pos);
 }
 
 irr::scene::IMeshSceneNode* Shot::getShotSceneNode() const
@@ -94,4 +99,9 @@ void Shot::removeCollisionResponseAnimators()
 		node->removeAnimator(*it);
 		*it = 0;
 	}
+}
+
+irr::core::vector3df Shot::getRadius() const
+{
+	return radius;
 }
