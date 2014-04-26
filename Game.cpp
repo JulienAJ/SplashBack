@@ -285,18 +285,17 @@ void Game::loadScene()
 			tile->setMaterialTexture(0, driver->getTexture("media/tile.jpg"));
 
 			scene::ITriangleSelector *selector = smgr->createTriangleSelector(tile_mesh, tile);
+			tile->setTriangleSelector(selector);
 
 
-			const core::aabbox3d<f32>& box = tile->getBoundingBox();
-			core::vector3df radius = box.MaxEdge - box.getCenter();
 			scene::ISceneNodeAnimatorCollisionResponse *anim =
-				smgr->createCollisionResponseAnimator(selector, camera, radius,
-						core::vector3df(0, 0, 0));
+				smgr->createCollisionResponseAnimator(selector, camera,
+						core::vector3df(10, 5, 10), core::vector3df(0, 0, 0));
 			camera->addAnimator(anim);
 			anim->drop(); //plus besoin
 
 			anim = smgr->createCollisionResponseAnimator(selector,
-					shot->getShotSceneNode(), radius, core::vector3df(0, 0, 0));
+					shot->getShotSceneNode(), shot->getRadius(), core::vector3df(0, 0, 0));
 			selector->drop(); //plus besoin
 			shot->addCollisionResponseAnimator(anim);
 			anim->drop(); //plus besoin
@@ -345,8 +344,8 @@ void Game::createWaterBall(int size, int line, int column)
 	water_ball->setTriangleSelector(selector);
 
 	scene::ISceneNodeAnimatorCollisionResponse *anim =
-		smgr->createCollisionResponseAnimator(selector, shot->getShotSceneNode(),
-				core::vector3df(.2f, .2f, .2f)*size, core::vector3df(0, 0, 0));
+		smgr->createCollisionResponseAnimator(selector, shot->getShotSceneNode(), shot->getRadius()
+				/*core::vector3df(.2f, .2f, .2f)*size*/, core::vector3df(0, 0, 0));
 	selector->drop(); //plus besoin
 	anim->setCollisionCallback(this);
 	shot->addCollisionResponseAnimator(anim, id);
