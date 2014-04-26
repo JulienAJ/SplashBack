@@ -297,6 +297,7 @@ void Game::loadScene()
 			anim = smgr->createCollisionResponseAnimator(selector,
 					shot->getShotSceneNode(), shot->getRadius(), core::vector3df(0, 0, 0));
 			selector->drop(); //plus besoin
+			anim->setCollisionCallback(this);
 			shot->addCollisionResponseAnimator(anim);
 			anim->drop(); //plus besoin
 
