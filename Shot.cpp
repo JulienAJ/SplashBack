@@ -50,8 +50,6 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	if(!hasFinished())
 		return;
 
-	stop();
-
 	irr::scene::ICameraSceneNode *camera = smgr->getActiveCamera();
 	irr::core::vector3df target = camera->getTarget();
 	irr::core::vector3df pos = camera->getPosition();
