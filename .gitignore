@@ -2,4 +2,5 @@
 *.swp
 Splash
 Splash.app
+Splash.core
 Makefile.mk
