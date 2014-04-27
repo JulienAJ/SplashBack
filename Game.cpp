@@ -441,6 +441,10 @@ void Game::shoot()
 
 bool Game::onCollision(const scene::ISceneNodeAnimatorCollisionResponse &animator)
 {
+	// ignorer collision si shot déjà stoppé
+	if(shot->hasFinished())
+		return true;
+
 	shot->stop();
 
 	scene::ISceneNode *node = animator.getCollisionNode();
