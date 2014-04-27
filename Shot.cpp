@@ -16,9 +16,6 @@ Shot::Shot(irr::scene::ISceneManager *smgr)
 
 Shot::~Shot()
 {
-	if(flyAnimator)
-		flyAnimator->drop();
-
 	node->remove();
 }
 
