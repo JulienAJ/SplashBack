@@ -7,14 +7,12 @@ class EventReceiver : public irr::IEventReceiver
 	private:
 		irr::IrrlichtDevice *mDevice;
 		Game *mGame;
-		Splash *mSplash;
 
 	public:
-		EventReceiver(irr::IrrlichtDevice* device, Game *game, Splash *splash)
+		EventReceiver(irr::IrrlichtDevice* device, Game *game)
 		{
 			mDevice = device;
 			mGame = game;
-			mSplash = splash;
 		}
 
 		virtual bool OnEvent(const irr::SEvent& event)

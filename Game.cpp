@@ -55,7 +55,7 @@ void Game::run()
 	loadScene();
 
 	// Evenements
-	EventReceiver eventReceiver(device, this, splash);
+	EventReceiver eventReceiver(device, this);
 	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
