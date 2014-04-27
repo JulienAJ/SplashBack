@@ -54,6 +54,10 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	irr::core::vector3df target = camera->getTarget();
 	irr::core::vector3df pos = camera->getPosition();
 
+	// aller un peu plus loin pour être sûr de provoquer une collision
+	irr::core::vector3df direction = target-pos;
+	target += direction;
+
 	flyAnimator = smgr->createFlyStraightAnimator(
 			pos, target, pos.getDistanceFrom(target)*10); // 10ms/unité
 
