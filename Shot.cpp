@@ -32,7 +32,7 @@ void Shot::stop()
 		flyAnimator = 0;
 
 		node->setVisible(false);
-		node->setPosition(irr::core::vector3df(0, 0, 30));
+		node->setPosition(irr::core::vector3df(0, 100, -100));
 	}
 }
 
@@ -61,7 +61,6 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	node->addAnimator(flyAnimator);
 	flyAnimator->drop();
 	node->setVisible(true);
-	node->setPosition(pos);
 }
 
 irr::scene::IMeshSceneNode* Shot::getShotSceneNode() const
