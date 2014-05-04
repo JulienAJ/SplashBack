@@ -11,7 +11,7 @@ class Shot
 		irr::core::vector3df radius;
 		irr::scene::ISceneNodeAnimator *flyAnimator;
 		std::vector<irr::scene::ISceneNodeAnimator*> collisionAnimators;
-	
+
 	public:
 		Shot(irr::scene::ISceneManager*);
 		~Shot();
