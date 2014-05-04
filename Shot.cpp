@@ -8,6 +8,7 @@ Shot::Shot(irr::scene::ISceneManager *smgr)
 	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->setVisible(false);
 	flyAnimator = 0;
+	toDelete = 0;
 	collisionAnimators.resize(16, 0); //16 balles
 
 	const irr::core::aabbox3d<irr::f32>& box = node->getBoundingBox();
@@ -28,7 +29,7 @@ void Shot::stop()
 {
 	if(flyAnimator)
 	{
-		node->removeAnimator(flyAnimator);
+		toDelete = flyAnimator;
 		flyAnimator = 0;
 
 		node->setVisible(false);
@@ -55,12 +56,16 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	irr::core::vector3df direction = target-pos;
 	target += direction;
 
+	node->setVisible(false);
+	node->setPosition(irr::core::vector3df(0, 100, -100));
+
 	flyAnimator = smgr->createFlyStraightAnimator(
 			pos, target, pos.getDistanceFrom(target)*10); // 10ms/unité
 
 	node->addAnimator(flyAnimator);
 	flyAnimator->drop();
 	node->setVisible(true);
+	node->removeAnimator(toDelete);
 }
 
 irr::scene::IMeshSceneNode* Shot::getShotSceneNode() const
