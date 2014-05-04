@@ -10,6 +10,7 @@ class Shot
 		irr::scene::IMeshSceneNode *node;
 		irr::core::vector3df radius;
 		irr::scene::ISceneNodeAnimator *flyAnimator;
+		irr::scene::ISceneNodeAnimator *toDelete;
 		std::vector<irr::scene::ISceneNodeAnimator*> collisionAnimators;
 
 	public:
