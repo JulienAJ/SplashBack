@@ -5,6 +5,7 @@
 #include <list>
 #include "Splash.hpp"
 #include "VProgressBar.hpp"
+#include "Shot.hpp"
 
 struct Animation
 {
@@ -14,7 +15,7 @@ struct Animation
 	int direction;
 };
 
-class Game
+class Game : public irr::scene::ICollisionCallback
 {
 	irr::IrrlichtDevice *device;
 	irr::video::IVideoDriver *driver;
@@ -23,10 +24,13 @@ class Game
 
 	gui::IGUIFont* font;
 
-	VProgressBar *shots;
+	VProgressBar *shotsBar;
 
 	irr::scene::IAnimatedMesh *ball_mesh;
 	irr::scene::IMesh *bullet_mesh;
+
+	Shot *shot;
+
 	std::list<Animation> bulletsAnim;
 	Splash *splash;
 	irr::f32 tile_size;
@@ -40,6 +44,8 @@ class Game
 	void clearBoard();
 
 	Animation createAnimation(std::pair<int, int>&, std::pair<int, int>&, int, int);
+	void createWaterBall(int, int, int);
+	void removeWaterBall(irr::scene::IAnimatedMeshSceneNode*);
 
 	irr::core::stringw getLevel();
 
@@ -53,6 +59,9 @@ class Game
 		void play(int, int, bool = true, int = 0);
 		void gameOver();
 		void restart();
+
+		void shoot();
+		virtual bool onCollision (const irr::scene::ISceneNodeAnimatorCollisionResponse&);
 
 		enum { OK = 0, DEVICE_ERROR };
 		enum { PLAYING = 0, OVER };

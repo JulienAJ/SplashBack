@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Game.hpp"
 #include "EventReceiver.hpp"
+#include "Shot.hpp"
 
 using namespace irr;
 
@@ -25,18 +26,21 @@ Game::Game()
 	bullet_mesh = smgr->getMesh("media/elipse.3ds");
 	ball_mesh = 0;
 
-	shots = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));
-	shots->setValue(splash->getShots());
-	shots->setCritical(5);
-	shots->setOverBar(true);
+	shotsBar = new VProgressBar(device, 50, 600, 50, 200, 20, device->getVideoDriver()->getTexture("media/WaterTexture2.jpg"));
+	shotsBar->setValue(splash->getShots());
+	shotsBar->setCritical(5);
+	shotsBar->setOverBar(true);
 
 	font = device->getGUIEnvironment()->getFont("media/ScoreFont.png");
+
+	shot = new Shot(smgr);
 }
 
 Game::~Game()
 {
 	delete splash;
-	delete shots;
+	delete shotsBar;
+	delete shot;
 }
 
 void Game::run()
@@ -51,7 +55,7 @@ void Game::run()
 	loadScene();
 
 	// Evenements
-	EventReceiver eventReceiver(device, this, splash);
+	EventReceiver eventReceiver(device, this);
 	device->setEventReceiver(&eventReceiver);
 
 	int last_fps = -1;
@@ -77,7 +81,7 @@ void Game::render()
 {
 	driver->beginScene(true, true, video::SColor(0, 0, 0, 0));
 	smgr->drawAll();
-	shots->draw();
+	shotsBar->draw();
 	font->draw(getLevel(), core::rect<s32>(0, 0, 300, 100), video::SColor(255, 255, 255, 255));
 	device->getGUIEnvironment()->drawAll();
 	driver->endScene();
@@ -115,7 +119,7 @@ void Game::update()
 	}
 
 	int score = splash->getShots();
-	shots->setValue(score);
+	shotsBar->setValue(score);
 
 	if(bulletsAnim.empty())
 	{
@@ -200,25 +204,13 @@ void Game::updateBoard()
 			if(node)
 			{
 				if(cell == 0)
-					node->remove();
+					removeWaterBall(node);
 				else
 					node->setFrameLoop(node->getEndFrame(), cell*45);
 			}
-			else if(splash->getCell(i, j) != 0)
+			else
 			{
-				if(!ball_mesh)
-					ball_mesh = smgr->getMesh("media/v4.md3");
-
-				s32 x = j*tile_size;
-				s32 y = (3-i)*tile_size;
-
-				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(
-						ball_mesh, 0, (i*4)+j+1, core::vector3df(x, y, 0));
-				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
-				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
-				water_ball->setLoopMode(false);
-				water_ball->setFrameLoop(0, cell*45);
-				water_ball->setAnimationSpeed(100);
+				createWaterBall(cell, i, j);
 			}
 		}
 	}
@@ -236,9 +228,11 @@ void Game::clearBoard()
 					smgr->getSceneNodeFromId(i*4+j+1));
 
 			if(node)
-				node->remove();
+				removeWaterBall(node);
 		}
 	}
+
+	shot->removeCollisionResponseAnimators();
 }
 
 void Game::loadScene()
@@ -292,10 +286,17 @@ void Game::loadScene()
 			tile->setTriangleSelector(selector);
 
 
-			scene::ISceneNodeAnimator *anim = smgr->createCollisionResponseAnimator(
-					selector, camera, core::vector3df(30, 15, 30), core::vector3df(0, 0, 0));
-			selector->drop(); //plus besoin
+			scene::ISceneNodeAnimatorCollisionResponse *anim =
+				smgr->createCollisionResponseAnimator(selector, camera,
+						core::vector3df(10, 5, 10), core::vector3df(0, 0, 0));
 			camera->addAnimator(anim);
+			anim->drop(); //plus besoin
+
+			anim = smgr->createCollisionResponseAnimator(selector,
+					shot->getShotSceneNode(), shot->getRadius(), core::vector3df(0, 0, 0));
+			selector->drop(); //plus besoin
+			anim->setCollisionCallback(this);
+			shot->addCollisionResponseAnimator(anim);
 			anim->drop(); //plus besoin
 
 			id++;
@@ -308,32 +309,58 @@ void Game::loadScene()
 void Game::loadBalls()
 {
 	ball_mesh = smgr->getMesh("media/v4.md3");
-	s32 id = 1;
 
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
 		{
-			s32 x = j*tile_size;
-			s32 y = (3-i)*tile_size;
-
 			int cell = splash->getCell(i, j);
-			if(cell != 0)
-			{
-				scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(
-						ball_mesh, 0, id, core::vector3df(x, y, 0));
-				water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
-				water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
-				water_ball->setLoopMode(false);
-				water_ball->setFrameLoop(0, cell*45);
-				water_ball->setAnimationSpeed(100);
-			}
-
-			id++;
+			createWaterBall(cell, i, j);
 		}
 	}
 }
 
+void Game::createWaterBall(int size, int line, int column)
+{
+	if(size == 0)
+		return;
+
+	s32 x = column*tile_size;
+	s32 y = (3-line)*tile_size;
+
+	s32 id = line*4+column+1;
+
+	scene::IAnimatedMeshSceneNode *water_ball = smgr->addAnimatedMeshSceneNode(
+			ball_mesh, 0, id, core::vector3df(x, y, 0));
+	water_ball->setMaterialFlag(video::EMF_LIGHTING, false);
+	water_ball->setMaterialTexture(0, driver->getTexture("media/WaterTexture2.jpg"));
+
+	water_ball->setLoopMode(false);
+	water_ball->setFrameLoop(0, size*45);
+	water_ball->setAnimationSpeed(100);
+
+	scene::ITriangleSelector *selector = smgr->createTriangleSelector(water_ball);
+	water_ball->setTriangleSelector(selector);
+
+	scene::ISceneNodeAnimatorCollisionResponse *anim =
+		smgr->createCollisionResponseAnimator(selector, shot->getShotSceneNode(), shot->getRadius()
+				/*core::vector3df(.2f, .2f, .2f)*size*/, core::vector3df(0, 0, 0));
+	selector->drop(); //plus besoin
+	anim->setCollisionCallback(this);
+	shot->addCollisionResponseAnimator(anim, id);
+	anim->drop(); //plus besoin
+}
+
+void Game::removeWaterBall(scene::IAnimatedMeshSceneNode *node)
+{
+	s32 id = node->getID();
+
+	if(id < 1 || id > 16)
+		return;
+
+	shot->removeCollisionResponseAnimator(id);
+	node->remove();
+}
 
 void Game::setupCamera()
 {
@@ -403,4 +430,35 @@ void Game::gameOver()
 	state = OVER;
 	device->getGUIEnvironment()->addMessageBox(L"GAME OVER", L"RECOMMENCER ?", true,
 			irr::gui::EMBF_YES | irr::gui::EMBF_NO);
+}
+
+void Game::shoot()
+{
+	shot->shoot(smgr);
+}
+
+bool Game::onCollision(const scene::ISceneNodeAnimatorCollisionResponse &animator)
+{
+	// ignorer collision si shot déjà stoppé
+	if(shot->hasFinished())
+		return true;
+
+	shot->stop();
+
+	scene::ISceneNode *node = animator.getCollisionNode();
+	s32 id = node->getID()-1;
+
+	bool tile = (id > 16);
+
+	if(tile)
+		id -= 17;
+
+	int line = id/4;
+	int column = id%4;
+	int cell = splash->getCell(line, column);
+
+	if(!tile || cell == 0)
+		play(line, column);
+
+	return true;
 }

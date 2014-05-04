@@ -10,7 +10,7 @@ else
 LDFLAGS+=-lGL -lX11 -lXxf86vm -lXext
 endif
 
-all: main.o Game.o Splash.o
+all: main.o Game.o Splash.o Shot.o
 	$(CXX) $^ -o $(TARGET) $(LDFLAGS)
 
 main.o: main.cpp
@@ -20,6 +20,9 @@ Game.o: Game.cpp Game.hpp EventReceiver.hpp VProgressBar.hpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 Splash.o: Splash.cpp Splash.hpp
+	$(CXX) -c $< $(CXXFLAGS)
+
+Shot.o: Shot.cpp Shot.hpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 .PHONY: clean mrproper rebuild
