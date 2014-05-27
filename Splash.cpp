@@ -241,11 +241,17 @@ bool Splash::solve(std::list<std::pair<int, int> > &solution)
 {
 	uint32_t dump = binDump();
 	int shots_save = shots;
+	bool ret = false;
+	int n = 1;
 
-	solution.clear();
-	bool ret = solveBT(solution, 4);
-	restoreBoard(dump);
-	shots = shots_save;
+	// essayer de trouver une fin de jeu en 1, ..., shots restant coups
+	while(!ret && n <= shots_save)
+	{
+		solution.clear();
+		ret = solveBT(solution, n);
+		restoreBoard(dump);
+		shots = shots_save;
+	}
 
 	return ret;
 }
