@@ -56,11 +56,13 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	irr::core::vector3df direction = target-pos;
 	target += direction;
 
+	pos += direction.normalize()*3;
+
 	node->setVisible(false);
 	node->setPosition(irr::core::vector3df(0, 100, -100));
 
 	flyAnimator = smgr->createFlyStraightAnimator(
-			pos, target, pos.getDistanceFrom(target)*10); // 10ms/unité
+			pos, target, pos.getDistanceFrom(target)*5); // 5ms/unité
 
 	node->addAnimator(flyAnimator);
 	flyAnimator->drop();

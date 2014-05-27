@@ -7,6 +7,7 @@
 class Shot
 {
 	private:
+		irr::scene::IMesh *bulletMesh;
 		irr::scene::IMeshSceneNode *node;
 		irr::core::vector3df radius;
 		irr::scene::ISceneNodeAnimator *flyAnimator;
