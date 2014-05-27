@@ -132,6 +132,8 @@ void Game::update()
 		if(state == PLAYING && score == 0)
 			gameOver();
 	}
+
+	shot->update();
 }
 
 void Game::play(int line, int column, bool userEvent, int lastComboLevel)

@@ -58,7 +58,6 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 
 	pos += direction.normalize()*3;
 
-	node->setVisible(false);
 	node->setPosition(irr::core::vector3df(0, 100, -100));
 
 	flyAnimator = smgr->createFlyStraightAnimator(
@@ -67,7 +66,12 @@ void Shot::shoot(irr::scene::ISceneManager *smgr)
 	node->addAnimator(flyAnimator);
 	flyAnimator->drop();
 	node->setVisible(true);
-	node->removeAnimator(toDelete);
+
+	if(toDelete)
+	{
+		node->removeAnimator(toDelete);
+		toDelete = 0;
+	}
 }
 
 irr::scene::IMeshSceneNode* Shot::getShotSceneNode() const
